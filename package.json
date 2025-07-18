@@ -1,0 +1,29 @@
+{
+  "name": "meridianalgo-js",
+  "version": "1.0.0",
+  "description": "Node.js/TypeScript port of the meridianalgo Python package for trading and backtesting technical indicators.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "keywords": [
+    "trading",
+    "backtest",
+    "indicators",
+    "finance",
+    "meridianalgo"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.4",
+    "ts-jest": "^29.4.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "meridianalgo-js": "^1.0.0"
+  }
+}

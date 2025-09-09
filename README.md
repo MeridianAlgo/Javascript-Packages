@@ -478,4 +478,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **⭐ Star this repository if you find it useful!**
 
-**Made with ❤️ by the MeridianAlgo team**
+**MeridianAlgo** - Empowering the next generation of finance with advanced algorithmic investment tools.
+
+*Built with ❤️ by the Meridian Algorithmic Research Team (Quantum Meridian)*

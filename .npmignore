@@ -1,0 +1,40 @@
+# Source files
+src/
+test/
+*.test.ts
+*.spec.ts
+
+# Configuration files
+tsconfig.json
+jest.config.js
+.eslintrc.js
+.gitignore
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Development files
+.vscode/
+.idea/
+
+# Build tools
+node_modules/
+coverage/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env*
+
+# OS files
+.DS_Store
+Thumbs.db

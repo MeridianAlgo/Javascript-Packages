@@ -1,6 +1,6 @@
 {
   "name": "meridianalgo-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Advanced algorithmic trading library for Node.js & TypeScript with 100+ technical indicators, pattern recognition, and risk management tools.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

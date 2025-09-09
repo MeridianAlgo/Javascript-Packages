@@ -1,0 +1,78 @@
+{
+  "name": "meridianalgo-js",
+  "version": "1.0.0",
+  "description": "Advanced algorithmic trading library for Node.js & TypeScript with 100+ technical indicators, pattern recognition, and risk management tools.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run clean && npm run build && npm test",
+    "docs": "typedoc src/index.ts --out docs",
+    "dev": "npm run build:watch"
+  },
+  "keywords": [
+    "trading",
+    "technical-analysis",
+    "indicators",
+    "finance",
+    "quantitative",
+    "algorithmic-trading",
+    "backtesting",
+    "rsi",
+    "macd",
+    "bollinger-bands",
+    "moving-averages",
+    "oscillators",
+    "momentum",
+    "volatility",
+    "volume",
+    "pattern-recognition",
+    "risk-management",
+    "typescript",
+    "nodejs"
+  ],
+  "author": {
+    "name": "MeridianAlgo",
+    "email": "meridianalgo@gmail.com",
+    "url": "https://meridianalgo.org"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MeridianAlgo/Packages.git",
+    "directory": "javascript-package"
+  },
+  "bugs": {
+    "url": "https://github.com/MeridianAlgo/Packages/issues"
+  },
+  "homepage": "https://meridianalgo.org",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.17",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.1.2",
+    "tslib": "^2.6.2",
+    "typedoc": "^0.25.4",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {}
+}

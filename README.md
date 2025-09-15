@@ -472,7 +472,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Inspired by popular technical analysis libraries and academic research
 - Built with modern TypeScript best practices and performance optimization
 - Comprehensive test coverage for production reliability
-- Used by hedge funds, prop trading firms, and individual traders worldwide
+- Used by hedge funds, prop trading firms, and individual traders worldwide (lol, one can dream right)
 
 ---
 

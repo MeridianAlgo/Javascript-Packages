@@ -16,5 +16,9 @@
     {
       "path": "../strategies"
     }
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.spec.ts"
   ]
 }

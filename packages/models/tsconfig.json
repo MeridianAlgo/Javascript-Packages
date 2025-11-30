@@ -16,5 +16,9 @@
     {
       "path": "../utils"
     }
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.spec.ts"
   ]
 }

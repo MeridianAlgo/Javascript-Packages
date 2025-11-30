@@ -16,5 +16,9 @@
     {
       "path": "../indicators"
     }
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.spec.ts"
   ]
 }

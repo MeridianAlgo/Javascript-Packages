@@ -19,5 +19,9 @@
     {
       "path": "../risk"
     }
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.spec.ts"
   ]
 }

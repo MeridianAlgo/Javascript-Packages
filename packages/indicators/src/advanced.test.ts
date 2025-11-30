@@ -80,8 +80,8 @@ describe('Advanced Indicators', () => {
         [10, 11, 12]
       ];
       const result = FeatureEngineering.pca(data);
-      expect(result.components).toBeDefined();
-      expect(result.explained).toBeDefined();
+      expect(result.component).toBeDefined();
+      expect(result.variance).toBeDefined();
     });
   });
 
@@ -96,7 +96,7 @@ describe('Advanced Indicators', () => {
         v: 1000 + Math.random() * 100,
         symbol: 'TEST'
       }));
-      
+
       const result = MicrostructureIndicators.vpin(bars, 10);
       expect(result.length).toBeGreaterThan(0);
     });
@@ -111,7 +111,7 @@ describe('Advanced Indicators', () => {
         v: 1000,
         symbol: 'TEST'
       }));
-      
+
       const result = MicrostructureIndicators.orderImbalance(bars);
       expect(result.length).toBe(bars.length);
     });

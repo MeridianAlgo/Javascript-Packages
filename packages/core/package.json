@@ -8,11 +8,33 @@
     "build": "tsc",
     "test": "jest"
   },
-  "keywords": ["trading", "quant", "finance"],
+  "keywords": [
+    "trading",
+    "quant",
+    "finance"
+  ],
   "author": "MeridianAlgo",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.11.17",
     "typescript": "^5.3.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "directory": "packages/core",
+    "url": "https://github.com/MeridianAlgo/Javascript-Packages.git"
+  },
+  "homepage": "https://github.com/MeridianAlgo/Javascript-Packages#readme",
+  "bugs": {
+    "url": "https://github.com/MeridianAlgo/Javascript-Packages/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }

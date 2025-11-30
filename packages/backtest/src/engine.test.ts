@@ -1,7 +1,8 @@
 import { describe, it, expect } from '@jest/globals';
 import { TimeBasedEngine } from './engine';
 import { FixedCommission, FixedSlippage } from './costs';
-import { Bar, Strategy } from '@meridianalgo/core';
+import { Bar } from '@meridianalgo/core';
+import { Strategy } from '@meridianalgo/strategies';
 
 describe('Backtest Engine', () => {
   const bars: Bar[] = Array.from({ length: 100 }, (_, i) => ({
@@ -34,7 +35,7 @@ describe('Backtest Engine', () => {
       });
 
       const result = await engine.run();
-      
+
       expect(result.equity).toBeDefined();
       expect(result.trades).toBeDefined();
       expect(result.metrics).toBeDefined();
@@ -50,7 +51,7 @@ describe('Backtest Engine', () => {
       });
 
       const result = await engine.run();
-      
+
       // With commission, final equity should be less
       expect(result.equity[result.equity.length - 1].equity).toBeLessThan(100000 + bars.length * 0.5 * 10);
     });
@@ -64,7 +65,7 @@ describe('Backtest Engine', () => {
       });
 
       const result = await engine.run();
-      
+
       expect(result.trades.length).toBeGreaterThan(0);
     });
 
@@ -76,7 +77,7 @@ describe('Backtest Engine', () => {
       });
 
       const result = await engine.run();
-      
+
       expect(result.metrics.totalReturn).toBeDefined();
       expect(result.metrics.sharpeRatio).toBeDefined();
       expect(result.metrics.maxDrawdown).toBeDefined();
@@ -91,12 +92,12 @@ describe('Backtest Engine', () => {
       });
 
       const result = await engine.run();
-      
+
       expect(result.trades.length).toBeGreaterThan(0);
       result.trades.forEach(trade => {
         expect(trade.symbol).toBe('TEST');
         expect(trade.qty).toBeGreaterThan(0);
-        expect(trade.price).toBeGreaterThan(0);
+        expect(trade.entryPrice).toBeGreaterThan(0);
       });
     });
 
@@ -108,7 +109,7 @@ describe('Backtest Engine', () => {
       });
 
       const result = await engine.run();
-      
+
       // Should still complete without errors
       expect(result.equity).toBeDefined();
     });

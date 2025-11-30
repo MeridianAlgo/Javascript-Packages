@@ -16,7 +16,29 @@
     "@types/node": "^20.11.17",
     "typescript": "^5.3.3"
   },
-  "keywords": ["trading", "backtest", "simulation"],
+  "keywords": [
+    "trading",
+    "backtest",
+    "simulation"
+  ],
   "author": "MeridianAlgo",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "directory": "packages/backtest",
+    "url": "https://github.com/MeridianAlgo/Javascript-Packages.git"
+  },
+  "homepage": "https://github.com/MeridianAlgo/Javascript-Packages#readme",
+  "bugs": {
+    "url": "https://github.com/MeridianAlgo/Javascript-Packages/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }

@@ -1,0 +1,29 @@
+{
+  "name": "@meridianalgo/cli",
+  "version": "2.0.0",
+  "description": "CLI tools for MeridianAlgo",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "meridianalgo": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@meridianalgo/core": "workspace:*",
+    "@meridianalgo/data": "workspace:*",
+    "@meridianalgo/indicators": "workspace:*",
+    "@meridianalgo/strategies": "workspace:*",
+    "@meridianalgo/backtest": "workspace:*",
+    "commander": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "typescript": "^5.3.3"
+  },
+  "keywords": ["trading", "cli"],
+  "author": "MeridianAlgo",
+  "license": "MIT"
+}

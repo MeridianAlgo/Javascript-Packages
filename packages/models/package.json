@@ -1,0 +1,30 @@
+{
+  "name": "@meridianalgo/models",
+  "version": "2.0.0",
+  "description": "ML and time series models for MeridianAlgo",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@meridianalgo/core": "workspace:*",
+    "@meridianalgo/utils": "workspace:*"
+  },
+  "peerDependencies": {
+    "@tensorflow/tfjs-node": "^4.22.0"
+  },
+  "peerDependenciesMeta": {
+    "@tensorflow/tfjs-node": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "typescript": "^5.3.3"
+  },
+  "keywords": ["trading", "ml", "machine-learning", "time-series"],
+  "author": "MeridianAlgo",
+  "license": "MIT"
+}

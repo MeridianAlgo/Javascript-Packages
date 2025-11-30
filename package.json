@@ -1,0 +1,87 @@
+{
+    "name": "@meridianalgo/root",
+    "version": "2.0.0",
+    "private": true,
+    "description": "Professional-grade quantitative finance framework for JavaScript/TypeScript - algorithmic trading, backtesting, risk management, and portfolio optimization",
+    "keywords": [
+        "quantitative-finance",
+        "algorithmic-trading",
+        "trading",
+        "backtesting",
+        "technical-indicators",
+        "technical-analysis",
+        "portfolio-optimization",
+        "risk-management",
+        "machine-learning",
+        "typescript",
+        "quant",
+        "finance",
+        "trading-strategies",
+        "statistical-arbitrage",
+        "mean-reversion",
+        "momentum-trading",
+        "market-microstructure",
+        "garch",
+        "var",
+        "cvar",
+        "sharpe-ratio",
+        "kelly-criterion",
+        "black-litterman",
+        "markowitz",
+        "risk-parity",
+        "hmm",
+        "regime-detection",
+        "vpin",
+        "options-pricing",
+        "derivatives",
+        "financial-modeling"
+    ],
+    "author": "Meridian Algorithmic Research Team",
+    "license": "MIT",
+    "homepage": "https://github.com/MeridianAlgo/Javascript-Packages#readme",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MeridianAlgo/Javascript-Packages.git"
+    },
+    "bugs": {
+        "url": "https://github.com/MeridianAlgo/Javascript-Packages/issues"
+    },
+    "scripts": {
+        "build": "turbo run build",
+        "test": "turbo run test",
+        "lint": "turbo run lint",
+        "clean": "turbo run clean",
+        "dev": "turbo run dev",
+        "example:basic": "ts-node examples/basic-backtest.ts",
+        "example:advanced": "ts-node examples/advanced-features.ts",
+        "example:utils": "ts-node examples/utils-demo.ts",
+        "example:quant": "ts-node examples/quantitative-strategies.ts",
+        "example:risk": "ts-node examples/risk-management.ts",
+        "publish:all": "pnpm build && pnpm -r publish --access public",
+        "version:patch": "pnpm -r exec -- npm version patch",
+        "version:minor": "pnpm -r exec -- npm version minor",
+        "version:major": "pnpm -r exec -- npm version major"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.12",
+        "@types/node": "^20.11.17",
+        "@typescript-eslint/eslint-plugin": "^6.21.0",
+        "@typescript-eslint/parser": "^6.21.0",
+        "eslint": "^8.56.0",
+        "jest": "^29.7.0",
+        "rimraf": "^5.0.5",
+        "ts-jest": "^29.1.2",
+        "ts-node": "^10.9.2",
+        "tslib": "^2.6.2",
+        "turbo": "^1.11.0",
+        "typescript": "^5.3.3"
+    },
+    "workspaces": [
+        "packages/*"
+    ],
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": ">=8.0.0"
+    },
+    "packageManager": "pnpm@8.15.0"
+}

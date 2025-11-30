@@ -1,0 +1,21 @@
+{
+  "name": "@meridianalgo/optimize",
+  "version": "2.0.0",
+  "description": "Parameter optimization for MeridianAlgo",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@meridianalgo/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "typescript": "^5.3.3"
+  },
+  "keywords": ["trading", "optimization", "hyperparameter"],
+  "author": "MeridianAlgo",
+  "license": "MIT"
+}

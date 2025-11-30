@@ -1,0 +1,22 @@
+{
+  "name": "@meridianalgo/data",
+  "version": "2.0.0",
+  "description": "Data adapters and management for MeridianAlgo",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@meridianalgo/core": "workspace:*",
+    "yahoo-finance2": "^2.11.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "typescript": "^5.3.3"
+  },
+  "keywords": ["trading", "data", "market-data"],
+  "author": "MeridianAlgo",
+  "license": "MIT"
+}

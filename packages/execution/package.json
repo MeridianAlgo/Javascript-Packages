@@ -1,0 +1,22 @@
+{
+  "name": "@meridianalgo/execution",
+  "version": "2.0.0",
+  "description": "Paper and live trading execution for MeridianAlgo",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@meridianalgo/core": "workspace:*",
+    "@meridianalgo/strategies": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "typescript": "^5.3.3"
+  },
+  "keywords": ["trading", "execution", "broker", "paper-trading"],
+  "author": "MeridianAlgo",
+  "license": "MIT"
+}

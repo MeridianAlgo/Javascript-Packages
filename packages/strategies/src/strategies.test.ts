@@ -25,7 +25,7 @@ describe('Strategies', () => {
       });
 
       strategy.init(bars.slice(0, 20));
-      
+
       const signal = strategy.next(bars[20]);
       expect(signal).toBeDefined();
       expect(signal?.value).toBeGreaterThanOrEqual(-1);
@@ -52,7 +52,7 @@ describe('Strategies', () => {
       });
 
       strategy.init(bars.slice(0, 20));
-      
+
       const signal = strategy.next(bars[20]);
       expect(signal).toBeDefined();
     });
@@ -64,10 +64,10 @@ describe('Strategies', () => {
       const strategy2 = meanReversion({ period: 10, stdDev: 2 });
 
       const blended = StrategyComposer.blend([strategy1, strategy2], [0.6, 0.4]);
-      
+
       blended.init(bars.slice(0, 20));
       const signal = blended.next(bars[20]);
-      
+
       expect(signal).toBeDefined();
     });
 
@@ -76,30 +76,33 @@ describe('Strategies', () => {
       const strategy2 = meanReversion({ period: 10, stdDev: 2 });
 
       const voted = StrategyComposer.vote([strategy1, strategy2], 2);
-      
+
       voted.init(bars.slice(0, 20));
       const signal = voted.next(bars[20]);
-      
+
       expect(signal).toBeDefined();
     });
   });
 
   describe('Position Sizer', () => {
+    const signal = {
+      t: new Date(),
+      value: 1
+    };
+
     it('should calculate Kelly position size', () => {
-      const size = PositionSizer.kelly(0.6, 2, 100000, 100);
-      expect(size).toBeGreaterThan(0);
-      expect(size).toBeLessThanOrEqual(100000 / 100);
+      const size = PositionSizer.kelly(signal, 0.6, 2, 1);
+      expect(size).toBeGreaterThanOrEqual(0);
+      expect(size).toBeLessThanOrEqual(1);
     });
 
     it('should calculate volatility-targeted size', () => {
-      const returns = [0.01, -0.02, 0.015, -0.01, 0.02];
-      const size = PositionSizer.volTarget(returns, 0.1, 100000, 100);
+      const size = PositionSizer.volTarget(signal, 0.15, 0.20, 100000);
       expect(size).toBeGreaterThan(0);
     });
 
     it('should adjust for drawdown', () => {
-      const equity = [100000, 95000, 90000, 92000, 94000];
-      const size = PositionSizer.drawdownAware(equity, 1000, 0.1);
+      const size = PositionSizer.drawdownAware(signal, 0.05, 0.10, 1000);
       expect(size).toBeGreaterThan(0);
       expect(size).toBeLessThanOrEqual(1000);
     });

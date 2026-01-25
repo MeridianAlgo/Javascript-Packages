@@ -21,6 +21,7 @@ export class ConsoleLogger implements Logger {
     return levels.indexOf(level) >= levels.indexOf(this.level);
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   debug(message: string, meta?: any): void {
     if (this.shouldLog('debug')) {
       // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any
@@ -28,6 +29,7 @@ export class ConsoleLogger implements Logger {
     }
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   info(message: string, meta?: any): void {
     if (this.shouldLog('info')) {
       // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any
@@ -35,6 +37,7 @@ export class ConsoleLogger implements Logger {
     }
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   warn(message: string, meta?: any): void {
     if (this.shouldLog('warn')) {
       // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any
@@ -42,6 +45,7 @@ export class ConsoleLogger implements Logger {
     }
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error(message: string, meta?: any): void {
     if (this.shouldLog('error')) {
       // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any

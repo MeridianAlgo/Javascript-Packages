@@ -128,6 +128,7 @@ export class Meridian {
     return this;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getDataAdapter(id: string): any {
     const adapter = this.dataAdapters.get(id);
     if (!adapter) {
@@ -136,6 +137,7 @@ export class Meridian {
     return adapter;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getIndicator(id: string): any {
     const indicator = this.indicators.get(id);
     if (!indicator) {
@@ -144,6 +146,7 @@ export class Meridian {
     return indicator;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getStrategy(id: string): any {
     const strategy = this.strategies.get(id);
     if (!strategy) {
@@ -152,6 +155,7 @@ export class Meridian {
     return strategy;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getModel(id: string): any {
     const model = this.models.get(id);
     if (!model) {
@@ -160,6 +164,7 @@ export class Meridian {
     return model;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getBroker(id: string): any {
     const broker = this.brokers.get(id);
     if (!broker) {
@@ -168,6 +173,7 @@ export class Meridian {
     return broker;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getOptimizer(id: string): any {
     const optimizer = this.optimizers.get(id);
     if (!optimizer) {
@@ -176,6 +182,7 @@ export class Meridian {
     return optimizer;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getVisualizer(id: string): any {
     const visualizer = this.visualizers.get(id);
     if (!visualizer) {

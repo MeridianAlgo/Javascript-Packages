@@ -37,6 +37,10 @@
     "type": "git",
     "url": "https://github.com/MeridianAlgo/Javascript-Packages.git"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "bugs": {
     "url": "https://github.com/MeridianAlgo/Javascript-Packages/issues"
   },

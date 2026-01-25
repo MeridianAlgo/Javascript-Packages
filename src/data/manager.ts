@@ -61,10 +61,15 @@ export class DataManager {
           if (bar.t < action.date) {
             return {
               ...bar,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               o: bar.o / action.ratio!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               h: bar.h / action.ratio!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               l: bar.l / action.ratio!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               c: bar.c / action.ratio!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               v: bar.v * action.ratio!
             };
           }

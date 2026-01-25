@@ -85,6 +85,7 @@ export class BinanceAdapter implements DataAdapter {
   
   private connectWebSocket(url: string, callback: (bar: Bar) => void, symbols: string[]): void {
     if (typeof WebSocket === 'undefined') {
+      // eslint-disable-next-line no-console
       console.warn('WebSocket not available in this environment');
       return;
     }
@@ -121,6 +122,7 @@ export class BinanceAdapter implements DataAdapter {
     };
     
     this.ws.onerror = (error) => {
+      // eslint-disable-next-line no-console
       console.error('WebSocket error:', error);
     };
     

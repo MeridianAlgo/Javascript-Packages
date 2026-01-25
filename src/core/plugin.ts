@@ -193,9 +193,13 @@ export function createMeridian(config?: Partial<MeridianConfig>): Meridian {
   };
 
   const logger: Logger = {
+    // eslint-disable-next-line no-console
     debug: (msg: string) => console.debug(msg),
+    // eslint-disable-next-line no-console
     info: (msg: string) => console.info(msg),
+    // eslint-disable-next-line no-console
     warn: (msg: string) => console.warn(msg),
+    // eslint-disable-next-line no-console
     error: (msg: string) => console.error(msg)
   };
 

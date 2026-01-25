@@ -65,12 +65,15 @@ export class ConsoleLogger implements Logger {
     switch (level) {
       case 'debug':
       case 'info':
+        // eslint-disable-next-line no-console
         console.log(logMessage);
         break;
       case 'warn':
+        // eslint-disable-next-line no-console
         console.warn(logMessage);
         break;
       case 'error':
+        // eslint-disable-next-line no-console
         console.error(logMessage);
         break;
     }
@@ -128,6 +131,7 @@ export class StructuredLogger implements Logger {
     
     // Also log to console
     const metaStr = meta ? ` ${JSON.stringify(meta)}` : '';
+    // eslint-disable-next-line no-console
     console.log(`[${entry.timestamp.toISOString()}] [${level.toUpperCase()}] [${this.traceId}] ${message}${metaStr}`);
   }
   

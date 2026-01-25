@@ -33,6 +33,7 @@ export class RandomSearchOptimizer implements Optimizer {
   }
   
   private sampleParams(space: ParameterSpace): Record<string, any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: Record<string, any> = {};
     
     for (const [key, param] of Object.entries(space)) {
@@ -40,12 +41,15 @@ export class RandomSearchOptimizer implements Optimizer {
         const values = param.values || [];
         params[key] = values[Math.floor(Math.random() * values.length)];
       } else if (param.type === 'discrete') {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const range = param.max! - param.min!;
         const step = param.step || 1;
         const steps = Math.floor(range / step);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         params[key] = param.min! + Math.floor(Math.random() * (steps + 1)) * step;
       } else {
         // Continuous
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         params[key] = param.min! + Math.random() * (param.max! - param.min!);
       }
     }

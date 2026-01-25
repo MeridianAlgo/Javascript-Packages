@@ -49,6 +49,7 @@ export class GridSearchOptimizer implements Optimizer {
     } else if (param.type === 'discrete') {
       const values: number[] = [];
       const step = param.step || 1;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       for (let v = param.min!; v <= param.max!; v += step) {
         values.push(v);
       }
@@ -56,7 +57,9 @@ export class GridSearchOptimizer implements Optimizer {
     } else {
       // Continuous - sample at regular intervals
       const values: number[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const step = param.step || (param.max! - param.min!) / 10;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       for (let v = param.min!; v <= param.max!; v += step) {
         values.push(v);
       }
@@ -68,9 +71,11 @@ export class GridSearchOptimizer implements Optimizer {
     if (arrays.length === 0) return [[]];
     if (arrays.length === 1) return arrays[0].map(x => [x]);
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [first, ...rest] = arrays;
     const restProduct = this.cartesianProduct(rest);
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: any[][] = [];
     for (const item of first) {
       for (const combo of restProduct) {

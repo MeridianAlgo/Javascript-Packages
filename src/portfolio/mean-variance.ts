@@ -154,9 +154,11 @@ export class MeanVarianceOptimizer implements PortfolioOptimizer {
     
     // Min/max weight
     if (constraints.minWeight !== undefined) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       result = result.map(w => Math.max(constraints.minWeight!, w));
     }
     if (constraints.maxWeight !== undefined) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       result = result.map(w => Math.min(constraints.maxWeight!, w));
     }
     

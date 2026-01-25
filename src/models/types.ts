@@ -10,6 +10,7 @@ export interface Model {
   load?(path: string): Promise<void>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ModelFactory = (config: any) => Model;
 
 export interface ModelConfig {

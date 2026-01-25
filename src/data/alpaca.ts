@@ -64,12 +64,14 @@ export class AlpacaAdapter implements DataAdapter {
       throw new Error(`Alpaca API error: ${response.status} ${response.statusText}`);
     }
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = await response.json();
     
     if (!data.bars || data.bars.length === 0) {
       return [];
     }
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return data.bars.map((bar: any) => ({
       t: new Date(bar.t),
       o: bar.o,
@@ -92,6 +94,7 @@ export class AlpacaAdapter implements DataAdapter {
       throw new Error(`Alpaca API error: ${response.status} ${response.statusText}`);
     }
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = await response.json();
     const quote = data.quote;
     
@@ -116,6 +119,7 @@ export class AlpacaAdapter implements DataAdapter {
       throw new Error(`Alpaca API error: ${response.status} ${response.statusText}`);
     }
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = await response.json();
     
     return {

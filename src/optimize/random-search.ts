@@ -13,6 +13,7 @@ export class RandomSearchOptimizer implements Optimizer {
     options: OptimizationOptions = {}
   ): Promise<ParameterOptimizationResult> {
     const maxIter = options.maxIterations || this.iterations;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results: Array<{ params: Record<string, any>; score: number }> = [];
     
     for (let i = 0; i < maxIter; i++) {
@@ -32,6 +33,7 @@ export class RandomSearchOptimizer implements Optimizer {
     };
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private sampleParams(space: ParameterSpace): Record<string, any> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: Record<string, any> = {};

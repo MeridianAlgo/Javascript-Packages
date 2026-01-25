@@ -12,6 +12,7 @@ export class GridSearchOptimizer implements Optimizer {
     options: OptimizationOptions = {}
   ): Promise<ParameterOptimizationResult> {
     const combinations = this.generateCombinations(space);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results: Array<{ params: Record<string, any>; score: number }> = [];
     
     for (const params of combinations) {
@@ -30,11 +31,13 @@ export class GridSearchOptimizer implements Optimizer {
     };
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private generateCombinations(space: ParameterSpace): Array<Record<string, any>> {
     const keys = Object.keys(space);
     const values = keys.map(key => this.generateValues(space[key]));
     
     return this.cartesianProduct(values).map(combo => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const params: Record<string, any> = {};
       keys.forEach((key, i) => {
         params[key] = combo[i];
@@ -43,6 +46,7 @@ export class GridSearchOptimizer implements Optimizer {
     });
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private generateValues(param: ParameterSpace[string]): any[] {
     if (param.type === 'categorical') {
       return param.values || [];
@@ -67,11 +71,11 @@ export class GridSearchOptimizer implements Optimizer {
     }
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private cartesianProduct(arrays: any[][]): any[][] {
     if (arrays.length === 0) return [[]];
     if (arrays.length === 1) return arrays[0].map(x => [x]);
     
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [first, ...rest] = arrays;
     const restProduct = this.cartesianProduct(rest);
     

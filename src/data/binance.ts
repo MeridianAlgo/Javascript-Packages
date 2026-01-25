@@ -50,8 +50,10 @@ export class BinanceAdapter implements DataAdapter {
       throw new Error(`Binance API error: ${response.status} ${response.statusText}`);
     }
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = await response.json();
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return data.map((kline: any[]) => ({
       t: new Date(kline[0]),
       o: parseFloat(kline[1]),
@@ -117,6 +119,7 @@ export class BinanceAdapter implements DataAdapter {
           }
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error parsing WebSocket message:', error);
       }
     };

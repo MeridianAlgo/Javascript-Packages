@@ -337,6 +337,7 @@ export class Indicators {
     type: MovingAverageType,
     data: number[],
     period: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...args: any[]
   ): number[] {
     switch (type.toLowerCase() as MovingAverageType) {

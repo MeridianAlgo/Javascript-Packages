@@ -66,18 +66,18 @@ describe('Core Plugin System', () => {
 
   describe('Plugin Validation', () => {
     it('should reject plugin without id', () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const invalidPlugin = {
         provides: {}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any;
 
       expect(() => meridian.use(invalidPlugin)).toThrow();
     });
 
     it('should reject plugin without provides', () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const invalidPlugin = {
         id: 'test'
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any;
 
       expect(() => meridian.use(invalidPlugin)).toThrow();

@@ -17,8 +17,10 @@ export interface Strategy {
   generate?(bars: Bar[]): Signal[];
   
   // Get current positions/state
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getState?(): Record<string, any>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type StrategyFactory = (params: any) => Strategy;
 

@@ -76,6 +76,7 @@ export interface NeuralNetworkConfig {
  * Note: Requires @tensorflow/tfjs to be installed as a peer dependency
  */
 export class PricePredictor {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private model: any = null;
   private config: NeuralNetworkConfig;
 
@@ -93,7 +94,7 @@ export class PricePredictor {
   /**
    * Train the model on historical price data
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
   async train(features: number[][], labels: number[]): Promise<any> {
     throw new MLError('TensorFlow.js not installed. Install @tensorflow/tfjs as a peer dependency to use ML features.');
   }

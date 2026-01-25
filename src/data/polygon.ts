@@ -30,6 +30,7 @@ export class PolygonAdapter implements DataAdapter {
     }
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async fetchWithRetry(url: string, retries = 3): Promise<any> {
     await this.rateLimit();
     
@@ -89,6 +90,7 @@ export class PolygonAdapter implements DataAdapter {
       return [];
     }
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return data.results.map((bar: any) => ({
       t: new Date(bar.t),
       o: bar.o,

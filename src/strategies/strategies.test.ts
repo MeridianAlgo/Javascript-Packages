@@ -38,6 +38,7 @@ describe('Strategies', () => {
         slowPeriod: 10
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const signals = strategy.generate!(bars);
       expect(signals.length).toBeGreaterThan(0);
     });

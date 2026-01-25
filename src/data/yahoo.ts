@@ -35,6 +35,7 @@ export class YahooAdapter implements DataAdapter {
       const result = await yahooFinance.chart(symbol, {
         period1: start,
         period2: end,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         interval: intervalMap[options.interval] as any
       });
       
@@ -42,6 +43,7 @@ export class YahooAdapter implements DataAdapter {
         return [];
       }
       
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const bars: Bar[] = result.quotes.map((quote: any) => ({
         t: quote.date,
         o: quote.open || 0,
@@ -54,6 +56,7 @@ export class YahooAdapter implements DataAdapter {
       
       return bars;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error fetching data for ${symbol}:`, error);
       throw new Error(`Failed to fetch data from Yahoo Finance: ${error}`);
     }

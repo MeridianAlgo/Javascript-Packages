@@ -517,6 +517,7 @@ export function performanceAnalysis(
   const var95 = valueAtRisk(returns, 0.05);
   const cvar95 = conditionalValueAtRisk(returns, 0.05);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: any = {
     totalReturn,
     annualizedReturn,

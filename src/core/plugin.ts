@@ -11,12 +11,19 @@ export interface MeridianPlugin {
   version?: string;
   init?(ctx: MeridianContext): Promise<void> | void;
   provides: Partial<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dataAdapters: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     indicators: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     strategies: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     models: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     brokers: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     optimizers: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     visualizers: Record<string, any>;
   }>;
 }
@@ -25,19 +32,28 @@ export interface MeridianPlugin {
 export interface MeridianContext {
   config: MeridianConfig;
   logger: Logger;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cache?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   storage?: any;
 }
 
 // Main framework class
 export class Meridian {
   private plugins: Map<string, MeridianPlugin> = new Map();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private dataAdapters: Map<string, any> = new Map();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private indicators: Map<string, any> = new Map();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private strategies: Map<string, any> = new Map();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private models: Map<string, any> = new Map();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private brokers: Map<string, any> = new Map();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private optimizers: Map<string, any> = new Map();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private visualizers: Map<string, any> = new Map();
 
   constructor(private config: MeridianConfig, private logger: Logger) { }

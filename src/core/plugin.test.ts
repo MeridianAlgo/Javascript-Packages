@@ -66,6 +66,7 @@ describe('Core Plugin System', () => {
 
   describe('Plugin Validation', () => {
     it('should reject plugin without id', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const invalidPlugin = {
         provides: {}
       } as any;
@@ -74,6 +75,7 @@ describe('Core Plugin System', () => {
     });
 
     it('should reject plugin without provides', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const invalidPlugin = {
         id: 'test'
       } as any;
@@ -112,6 +114,7 @@ describe('Core Plugin System', () => {
   describe('Plugin Initialization', () => {
     it('should call init method with context', async () => {
       let initCalled = false;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let receivedContext: any = null;
 
       const plugin: MeridianPlugin = {
@@ -147,6 +150,7 @@ describe('Core Plugin System', () => {
     it('should register and retrieve data adapters', () => {
       const mockAdapter = {
         id: 'mock',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ohlcv: async (): Promise<any[]> => []
       };
 
@@ -169,6 +173,7 @@ describe('Core Plugin System', () => {
     it('should register and retrieve strategies', () => {
       const mockStrategy = () => ({
         id: 'test',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         next: (): any => null
       });
 

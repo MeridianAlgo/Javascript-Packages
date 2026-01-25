@@ -23,28 +23,28 @@ export class ConsoleLogger implements Logger {
   
   debug(message: string, meta?: any): void {
     if (this.shouldLog('debug')) {
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any
       console.debug(`[DEBUG] ${message}`, meta || '');
     }
   }
   
   info(message: string, meta?: any): void {
     if (this.shouldLog('info')) {
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any
       console.info(`[INFO] ${message}`, meta || '');
     }
   }
   
   warn(message: string, meta?: any): void {
     if (this.shouldLog('warn')) {
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any
       console.warn(`[WARN] ${message}`, meta || '');
     }
   }
   
   error(message: string, meta?: any): void {
     if (this.shouldLog('error')) {
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console, @typescript-eslint/no-explicit-any
       console.error(`[ERROR] ${message}`, meta || '');
     }
   }

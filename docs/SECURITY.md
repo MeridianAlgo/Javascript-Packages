@@ -1,157 +1,241 @@
-# Security Policy
+/**
+ * Time and calendar utilities
+ */
 
-## Supported Versions
+import { Bar } from '../core';
 
-We actively maintain and provide security updates for the following versions of MeridianAlgo.js:
+export class TimeUtils {
+  /**
+   * Check if market is open
+   * Simplified - assumes US market hours (9:30 AM - 4:00 PM ET)
+   */
+  static isMarketOpen(date: Date, exchange: string = 'NYSE'): boolean {
+    // Check if weekend
+    const day = date.getDay();
+    if (day === 0 || day === 6) return false;
+    
+    // Check if holiday (simplified - major US holidays)
+    if (this.isHoliday(date, exchange)) return false;
+    
+    // Check market hours (simplified - assumes ET timezone)
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const time = hours * 60 + minutes;
+    
+    // 9:30 AM = 570 minutes, 4:00 PM = 960 minutes
+    return time >= 570 && time < 960;
+  }
+  
+  /**
+   * Get next market open time
+   */
+  static nextMarketOpen(date: Date, exchange: string = 'NYSE'): Date {
+    const next = new Date(date);
+    
+    // If it's a weekend, move to Monday
+    while (next.getDay() === 0 || next.getDay() === 6) {
+      next.setDate(next.getDate() + 1);
+    }
+    
+    // Set to 9:30 AM
+    next.setHours(9, 30, 0, 0);
+    
+    // If we're past market close, move to next day
+    if (date.getHours() >= 16) {
+      next.setDate(next.getDate() + 1);
+      while (next.getDay() === 0 || next.getDay() === 6) {
+        next.setDate(next.getDate() + 1);
+      }
+    }
+    
+    // Skip holidays
+    while (this.isHoliday(next, exchange)) {
+      next.setDate(next.getDate() + 1);
+      while (next.getDay() === 0 || next.getDay() === 6) {
+        next.setDate(next.getDate() + 1);
+      }
+    }
+    
+    return next;
+  }
+  
+  /**
+   * Count trading days between two dates
+   */
+  static tradingDays(start: Date, end: Date, exchange: string = 'NYSE'): number {
+    let count = 0;
+    const current = new Date(start);
+    
+    while (current <= end) {
+      if (this.isMarketOpen(current, exchange)) {
+        count++;
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    
+    return count;
+  }
+  
+  /**
+   * Check if date is a holiday
+   * Simplified - major US holidays only
+   */
+  static isHoliday(date: Date, exchange: string = 'NYSE'): boolean {
+    const month = date.getMonth();
+    const day = date.getDate();
+    const dayOfWeek = date.getDay();
+    
+    // New Year's Day
+    if (month === 0 && day === 1) return true;
+    
+    // Martin Luther King Jr. Day (3rd Monday in January)
+    if (month === 0 && dayOfWeek === 1 && day >= 15 && day <= 21) return true;
+    
+    // Presidents' Day (3rd Monday in February)
+    if (month === 1 && dayOfWeek === 1 && day >= 15 && day <= 21) return true;
+    
+    // Good Friday (approximate - Friday before Easter)
+    // Simplified: skip complex Easter calculation
+    
+    // Memorial Day (last Monday in May)
+    if (month === 4 && dayOfWeek === 1 && day >= 25) return true;
+    
+    // Independence Day
+    if (month === 6 && day === 4) return true;
+    
+    // Labor Day (1st Monday in September)
+    if (month === 8 && dayOfWeek === 1 && day <= 7) return true;
+    
+    // Thanksgiving (4th Thursday in November)
+    if (month === 10 && dayOfWeek === 4 && day >= 22 && day <= 28) return true;
+    
+    // Christmas
+    if (month === 11 && day === 25) return true;
+    
+    return false;
+  }
+  
+  /**
+   * Resample bars to different timeframe
+   */
+  static resample(bars: Bar[], interval: string): Bar[] {
+    if (bars.length === 0) return [];
+    
+    const intervalMinutes = this.parseInterval(interval);
+    const resampled: Bar[] = [];
+    
+    let currentBar: Bar | null = null;
+    let currentBucket = 0;
+    
+    for (const bar of bars) {
+      const barBucket = Math.floor(bar.t.getTime() / (intervalMinutes * 60 * 1000));
+      
+      if (currentBar === null || barBucket !== currentBucket) {
+        if (currentBar) {
+          resampled.push(currentBar);
+        }
+        
+        currentBar = {
+          t: new Date(barBucket * intervalMinutes * 60 * 1000),
+          o: bar.o,
+          h: bar.h,
+          l: bar.l,
+          c: bar.c,
+          v: bar.v,
+          symbol: bar.symbol
+        };
+        currentBucket = barBucket;
+      } else {
+        // Update current bar
+        currentBar.h = Math.max(currentBar.h, bar.h);
+        currentBar.l = Math.min(currentBar.l, bar.l);
+        currentBar.c = bar.c;
+        currentBar.v += bar.v;
+      }
+    }
+    
+    if (currentBar) {
+      resampled.push(currentBar);
+    }
+    
+    return resampled;
+  }
+  
+  /**
+   * Parse interval string to minutes
+   */
+  private static parseInterval(interval: string): number {
+    const match = interval.match(/^(\d+)([mhd])$/);
+    if (!match) throw new Error(`Invalid interval: ${interval}`);
+    
+    const value = parseInt(match[1]);
+    const unit = match[2];
+    
+    switch (unit) {
+      case 'm': return value;
+      case 'h': return value * 60;
+      case 'd': return value * 60 * 24;
+      default: throw new Error(`Invalid interval unit: ${unit}`);
+    }
+  }
+  
+  /**
+   * Format date as ISO string (YYYY-MM-DD)
+   */
+  static formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+  
+  /**
+   * Parse date string
+   */
+  static parseDate(dateStr: string): Date {
+    return new Date(dateStr);
+  }
+  
+  /**
+   * Get start of day
+   */
+  static startOfDay(date: Date): Date {
+    const result = new Date(date);
+    result.setHours(0, 0, 0, 0);
+    return result;
+  }
+  
+  /**
+   * Get end of day
+   */
+  static endOfDay(date: Date): Date {
+    const result = new Date(date);
+    result.setHours(23, 59, 59, 999);
+    return result;
+  }
+  
+  /**
+   * Add days to date
+   */
+  static addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+  
+  /**
+   * Add trading days to date
+   */
+  static addTradingDays(date: Date, days: number, exchange: string = 'NYSE'): Date {
+    let result = new Date(date);
+    let count = 0;
+    
+    while (count < days) {
+      result = this.addDays(result, 1);
+      if (this.isMarketOpen(result, exchange)) {
+        count++;
+      }
+    }
+    
+    return result;
+  }
+}
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 2.0.x   | Yes                |
-| < 2.0   | No                 |
 
-## Reporting a Vulnerability
-
-We take security vulnerabilities seriously. If you discover a security vulnerability in MeridianAlgo.js, please follow these steps:
-
-### 1. DO NOT create a public GitHub issue
-
-Security vulnerabilities should be reported privately to prevent exploitation.
-
-### 2. Email Security Team
-
-Send an email to: **security@meridianalgo.org**
-
-Include the following information:
-- **Description** - Clear description of the vulnerability
-- **Steps to Reproduce** - Detailed steps to reproduce the issue
-- **Impact Assessment** - Potential impact and severity
-- **Affected Versions** - Which versions are affected
-- **Proposed Fix** - If you have a suggested fix (optional)
-
-### 3. Response Timeline
-
-- **Initial Response**: Within 24 hours
-- **Status Update**: Within 72 hours
-- **Resolution**: Within 30 days (depending on severity)
-
-### 4. Disclosure Process
-
-- We will work with you to understand and reproduce the issue
-- We will develop and test a fix
-- We will coordinate the release of the fix
-- We will credit you for the discovery (if desired)
-
-## Security Best Practices
-
-### For Users
-
-1. **Keep Updated** - Always use the latest version of MeridianAlgo.js
-2. **Validate Input** - Always validate input data before passing to indicators
-3. **Handle Errors** - Implement proper error handling in your applications
-4. **Secure Dependencies** - Regularly audit your project dependencies
-5. **Environment Variables** - Never commit API keys or sensitive data
-
-### For Developers
-
-1. **Input Validation** - All functions include robust input validation
-2. **Error Handling** - Custom IndicatorError class for consistent error handling
-3. **Type Safety** - Full TypeScript support prevents many runtime errors
-4. **Testing** - Comprehensive test suite covers edge cases and error conditions
-5. **Documentation** - Clear documentation helps prevent misuse
-
-## Security Considerations
-
-### Data Privacy
-
-- **No Data Collection** - MeridianAlgo.js does not collect or transmit any data
-- **Local Processing** - All calculations are performed locally
-- **Minimal Dependencies** - Reduced attack surface through minimal external dependencies
-
-### Financial Data Security
-
-- **No Storage** - The library does not store financial data
-- **No Transmission** - No data is transmitted to external servers
-- **Local Only** - All processing happens in your application
-
-### Code Security
-
-- **Open Source** - Full source code is available for review
-- **Regular Audits** - Code is regularly reviewed for security issues
-- **Dependency Scanning** - Automated scanning for vulnerable dependencies
-- **Static Analysis** - ESLint and TypeScript provide additional security checks
-
-## Known Security Issues
-
-Currently, there are no known security vulnerabilities in MeridianAlgo.js.
-
-## Security Checklist
-
-Before using MeridianAlgo.js in production:
-
-- [ ] Update to the latest version
-- [ ] Review your input validation
-- [ ] Implement proper error handling
-- [ ] Test with edge cases
-- [ ] Review your application's security posture
-- [ ] Consider rate limiting for high-frequency usage
-- [ ] Implement proper logging and monitoring
-
-## Security Tools
-
-### Recommended Tools
-
-- **npm audit** - Check for vulnerable dependencies
-- **Snyk** - Continuous security monitoring
-- **OWASP ZAP** - Web application security testing
-- **ESLint Security Plugin** - Static analysis for security issues
-
-### Example Security Audit
-
-```bash
-# Check for vulnerable dependencies
-npm audit
-
-# Fix automatically fixable vulnerabilities
-npm audit fix
-
-# Run security-focused linting
-npm run lint -- --ext .ts,.js src/
-```
-
-## Contact Information
-
-### Security Team
-- **Email**: security@meridianalgo.org
-- **Response Time**: 24 hours
-- **PGP Key**: Available upon request
-
-### General Support
-- **GitHub Issues**: https://github.com/MeridianAlgo/Javascript-Packages/issues
-- **GitHub Discussions**: https://github.com/MeridianAlgo/Javascript-Packages/discussions
-
-## Security Policy Updates
-
-This security policy may be updated from time to time. Significant changes will be announced through:
-
-- GitHub releases
-- Email notifications to security contacts
-- Website announcements
-
-## Acknowledgments
-
-We thank the security researchers and community members who help keep MeridianAlgo.js secure by:
-
-- Reporting vulnerabilities responsibly
-- Contributing security improvements
-- Participating in security discussions
-- Maintaining security best practices
-
----
-
-**Last Updated**: November 30, 2025  
-**Version**: 2.0.0  
-**Next Review**: February 28, 2026
-
----
-
-Copyright (c) 2025 Meridian Algorithmic Research Team

@@ -1,8 +1,13 @@
 {
-  "name": "@meridianalgo/root",
-  "version": "2.0.1",
-  "private": true,
+  "name": "meridianalgo",
+  "version": "4.0.0",
   "description": "Professional-grade quantitative finance framework for JavaScript/TypeScript - algorithmic trading, backtesting, risk management, and portfolio optimization",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "meridianalgo": "./dist/cli/index.js"
+  },
   "keywords": [
     "quantitative-finance",
     "algorithmic-trading",
@@ -21,17 +26,6 @@
     "mean-reversion",
     "momentum-trading",
     "market-microstructure",
-    "garch",
-    "var",
-    "cvar",
-    "sharpe-ratio",
-    "kelly-criterion",
-    "black-litterman",
-    "markowitz",
-    "risk-parity",
-    "hmm",
-    "regime-detection",
-    "vpin",
     "options-pricing",
     "derivatives",
     "financial-modeling"
@@ -47,22 +41,26 @@
     "url": "https://github.com/MeridianAlgo/Javascript-Packages/issues"
   },
   "scripts": {
-    "build": "turbo run build",
-    "test": "turbo run test",
-    "lint": "turbo run lint",
-    "clean": "turbo run clean",
-    "dev": "turbo run dev",
+    "build": "rimraf dist && tsc && tsc-alias",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "clean": "rimraf dist node_modules",
     "example:basic": "ts-node examples/basic-backtest.ts",
     "example:advanced": "ts-node examples/advanced-features.ts",
     "example:utils": "ts-node examples/utils-demo.ts",
     "example:quant": "ts-node examples/quantitative-strategies.ts",
-    "example:risk": "ts-node examples/risk-management.ts",
-    "publish:all": "pnpm build && pnpm -r publish --access public",
-    "version:patch": "pnpm -r exec -- npm version patch",
-    "version:minor": "pnpm -r exec -- npm version minor",
-    "version:major": "pnpm -r exec -- npm version major"
+    "example:risk": "ts-node examples/risk-management.ts"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "tslib": "^2.6.2",
+    "yahoo-finance2": "^2.11.3"
   },
   "devDependencies": {
+    "@jest/globals": "^30.2.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.17",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
@@ -72,16 +70,15 @@
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "tslib": "^2.6.2",
-    "turbo": "^1.11.0",
+    "tsc-alias": "^1.8.8",
     "typescript": "^5.3.3"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "node": ">=18.0.0"
   },
-  "packageManager": "pnpm@8.15.0"
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }

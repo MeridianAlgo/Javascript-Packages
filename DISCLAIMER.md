@@ -1,123 +1,241 @@
-# Disclaimer
+/**
+ * Time and calendar utilities
+ */
 
-## Legal Notice
+import { Bar } from '../core';
 
-This software is provided for educational and research purposes only. The use of this software for live trading or financial decision-making is at your own risk.
+export class TimeUtils {
+  /**
+   * Check if market is open
+   * Simplified - assumes US market hours (9:30 AM - 4:00 PM ET)
+   */
+  static isMarketOpen(date: Date, exchange: string = 'NYSE'): boolean {
+    // Check if weekend
+    const day = date.getDay();
+    if (day === 0 || day === 6) return false;
+    
+    // Check if holiday (simplified - major US holidays)
+    if (this.isHoliday(date, exchange)) return false;
+    
+    // Check market hours (simplified - assumes ET timezone)
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const time = hours * 60 + minutes;
+    
+    // 9:30 AM = 570 minutes, 4:00 PM = 960 minutes
+    return time >= 570 && time < 960;
+  }
+  
+  /**
+   * Get next market open time
+   */
+  static nextMarketOpen(date: Date, exchange: string = 'NYSE'): Date {
+    const next = new Date(date);
+    
+    // If it's a weekend, move to Monday
+    while (next.getDay() === 0 || next.getDay() === 6) {
+      next.setDate(next.getDate() + 1);
+    }
+    
+    // Set to 9:30 AM
+    next.setHours(9, 30, 0, 0);
+    
+    // If we're past market close, move to next day
+    if (date.getHours() >= 16) {
+      next.setDate(next.getDate() + 1);
+      while (next.getDay() === 0 || next.getDay() === 6) {
+        next.setDate(next.getDate() + 1);
+      }
+    }
+    
+    // Skip holidays
+    while (this.isHoliday(next, exchange)) {
+      next.setDate(next.getDate() + 1);
+      while (next.getDay() === 0 || next.getDay() === 6) {
+        next.setDate(next.getDate() + 1);
+      }
+    }
+    
+    return next;
+  }
+  
+  /**
+   * Count trading days between two dates
+   */
+  static tradingDays(start: Date, end: Date, exchange: string = 'NYSE'): number {
+    let count = 0;
+    const current = new Date(start);
+    
+    while (current <= end) {
+      if (this.isMarketOpen(current, exchange)) {
+        count++;
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    
+    return count;
+  }
+  
+  /**
+   * Check if date is a holiday
+   * Simplified - major US holidays only
+   */
+  static isHoliday(date: Date, exchange: string = 'NYSE'): boolean {
+    const month = date.getMonth();
+    const day = date.getDate();
+    const dayOfWeek = date.getDay();
+    
+    // New Year's Day
+    if (month === 0 && day === 1) return true;
+    
+    // Martin Luther King Jr. Day (3rd Monday in January)
+    if (month === 0 && dayOfWeek === 1 && day >= 15 && day <= 21) return true;
+    
+    // Presidents' Day (3rd Monday in February)
+    if (month === 1 && dayOfWeek === 1 && day >= 15 && day <= 21) return true;
+    
+    // Good Friday (approximate - Friday before Easter)
+    // Simplified: skip complex Easter calculation
+    
+    // Memorial Day (last Monday in May)
+    if (month === 4 && dayOfWeek === 1 && day >= 25) return true;
+    
+    // Independence Day
+    if (month === 6 && day === 4) return true;
+    
+    // Labor Day (1st Monday in September)
+    if (month === 8 && dayOfWeek === 1 && day <= 7) return true;
+    
+    // Thanksgiving (4th Thursday in November)
+    if (month === 10 && dayOfWeek === 4 && day >= 22 && day <= 28) return true;
+    
+    // Christmas
+    if (month === 11 && day === 25) return true;
+    
+    return false;
+  }
+  
+  /**
+   * Resample bars to different timeframe
+   */
+  static resample(bars: Bar[], interval: string): Bar[] {
+    if (bars.length === 0) return [];
+    
+    const intervalMinutes = this.parseInterval(interval);
+    const resampled: Bar[] = [];
+    
+    let currentBar: Bar | null = null;
+    let currentBucket = 0;
+    
+    for (const bar of bars) {
+      const barBucket = Math.floor(bar.t.getTime() / (intervalMinutes * 60 * 1000));
+      
+      if (currentBar === null || barBucket !== currentBucket) {
+        if (currentBar) {
+          resampled.push(currentBar);
+        }
+        
+        currentBar = {
+          t: new Date(barBucket * intervalMinutes * 60 * 1000),
+          o: bar.o,
+          h: bar.h,
+          l: bar.l,
+          c: bar.c,
+          v: bar.v,
+          symbol: bar.symbol
+        };
+        currentBucket = barBucket;
+      } else {
+        // Update current bar
+        currentBar.h = Math.max(currentBar.h, bar.h);
+        currentBar.l = Math.min(currentBar.l, bar.l);
+        currentBar.c = bar.c;
+        currentBar.v += bar.v;
+      }
+    }
+    
+    if (currentBar) {
+      resampled.push(currentBar);
+    }
+    
+    return resampled;
+  }
+  
+  /**
+   * Parse interval string to minutes
+   */
+  private static parseInterval(interval: string): number {
+    const match = interval.match(/^(\d+)([mhd])$/);
+    if (!match) throw new Error(`Invalid interval: ${interval}`);
+    
+    const value = parseInt(match[1]);
+    const unit = match[2];
+    
+    switch (unit) {
+      case 'm': return value;
+      case 'h': return value * 60;
+      case 'd': return value * 60 * 24;
+      default: throw new Error(`Invalid interval unit: ${unit}`);
+    }
+  }
+  
+  /**
+   * Format date as ISO string (YYYY-MM-DD)
+   */
+  static formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+  
+  /**
+   * Parse date string
+   */
+  static parseDate(dateStr: string): Date {
+    return new Date(dateStr);
+  }
+  
+  /**
+   * Get start of day
+   */
+  static startOfDay(date: Date): Date {
+    const result = new Date(date);
+    result.setHours(0, 0, 0, 0);
+    return result;
+  }
+  
+  /**
+   * Get end of day
+   */
+  static endOfDay(date: Date): Date {
+    const result = new Date(date);
+    result.setHours(23, 59, 59, 999);
+    return result;
+  }
+  
+  /**
+   * Add days to date
+   */
+  static addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+  
+  /**
+   * Add trading days to date
+   */
+  static addTradingDays(date: Date, days: number, exchange: string = 'NYSE'): Date {
+    let result = new Date(date);
+    let count = 0;
+    
+    while (count < days) {
+      result = this.addDays(result, 1);
+      if (this.isMarketOpen(result, exchange)) {
+        count++;
+      }
+    }
+    
+    return result;
+  }
+}
 
-## No Financial Advice
 
-MeridianAlgo and its contributors do not provide financial, investment, trading, or any other type of professional advice. The information and tools provided by this software are for informational purposes only and should not be construed as financial advice.
-
-## No Warranty
-
-This software is provided "as is" without warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, or non-infringement.
-
-THE SOFTWARE IS PROVIDED WITHOUT ANY GUARANTEES OR WARRANTIES REGARDING:
-- Accuracy of calculations or indicators
-- Reliability of data sources
-- Performance of trading strategies
-- Profitability of any trading approach
-- Suitability for any particular use case
-
-## Risk Warning
-
-Trading and investing in financial markets involves substantial risk of loss and is not suitable for every investor. Past performance is not indicative of future results. You should carefully consider your financial situation, risk tolerance, and investment objectives before using this software.
-
-RISKS INCLUDE BUT ARE NOT LIMITED TO:
-- Loss of capital
-- Market volatility
-- Execution risk
-- Technology failures
-- Data inaccuracies
-- Model risk
-- Overfitting and curve-fitting
-- Slippage and transaction costs
-
-## No Liability
-
-In no event shall MeridianAlgo, its contributors, or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
-
-This includes but is not limited to:
-- Direct, indirect, incidental, special, exemplary, or consequential damages
-- Loss of profits, revenue, data, or use
-- Business interruption
-- Any other commercial damages or losses
-
-## User Responsibility
-
-By using this software, you acknowledge and agree that:
-
-1. You are solely responsible for your own trading and investment decisions
-2. You will conduct your own due diligence and research
-3. You understand the risks involved in algorithmic trading
-4. You will comply with all applicable laws and regulations
-5. You will not hold the developers liable for any losses incurred
-6. You will use the software in accordance with the license terms
-
-## Backtesting Limitations
-
-Backtesting results are hypothetical and do not represent actual trading. Backtested performance:
-- May not reflect the impact of material economic and market factors
-- Does not account for all real-world trading costs and constraints
-- May be subject to data-snooping bias and overfitting
-- Cannot fully simulate the psychological aspects of real trading
-- May not accurately represent slippage, liquidity, or market impact
-
-## Data Accuracy
-
-While we strive for accuracy, we cannot guarantee:
-- The accuracy, completeness, or timeliness of any data
-- The reliability of third-party data sources
-- That data will be free from errors or interruptions
-- That defects will be corrected
-
-## Regulatory Compliance
-
-Users are responsible for ensuring their use of this software complies with all applicable laws, regulations, and rules, including but not limited to:
-- Securities regulations
-- Commodity trading regulations
-- Tax laws
-- Anti-money laundering requirements
-- Know-your-customer requirements
-- Market manipulation prohibitions
-
-## Third-Party Services
-
-This software may integrate with third-party services and data providers. We are not responsible for:
-- The availability, accuracy, or reliability of third-party services
-- Changes to third-party APIs or terms of service
-- Costs associated with third-party services
-- Privacy practices of third-party providers
-
-## Modification and Updates
-
-We reserve the right to modify, update, or discontinue this software at any time without notice. We are under no obligation to:
-- Provide updates or bug fixes
-- Maintain backward compatibility
-- Support any particular version
-- Continue development
-
-## Professional Advice
-
-Before making any financial decisions, you should consult with qualified professionals, including:
-- Licensed financial advisors
-- Certified public accountants
-- Legal counsel
-- Tax professionals
-
-## Jurisdiction
-
-This disclaimer is governed by the laws of the jurisdiction in which the software is used. Users are responsible for compliance with local laws.
-
-## Acceptance
-
-By downloading, installing, or using this software, you acknowledge that you have read, understood, and agree to be bound by this disclaimer. If you do not agree with any part of this disclaimer, do not use this software.
-
-## Contact
-
-For questions about this disclaimer, please contact the project maintainers through the official GitHub repository.
-
----
-
-Last Updated: November 30, 2025
-Version: 2.0.0

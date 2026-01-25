@@ -9,13 +9,13 @@ export class TimeUtils {
    * Check if market is open
    * Simplified - assumes US market hours (9:30 AM - 4:00 PM ET)
    */
-  static isMarketOpen(date: Date, exchange: string = 'NYSE'): boolean {
+  static isMarketOpen(date: Date): boolean {
     // Check if weekend
     const day = date.getDay();
     if (day === 0 || day === 6) return false;
     
-    // Check if holiday (simplified - major US holidays)
-    if (this.isHoliday(date, exchange)) return false;
+    // Check if holiday
+    if (this.isHoliday(date)) return false;
     
     // Check market hours (simplified - assumes ET timezone)
     const hours = date.getHours();

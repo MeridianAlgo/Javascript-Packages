@@ -169,14 +169,18 @@ export class TimeBasedEngine {
     
     // Win rate and profit factor
     const completedTrades = this.trades.filter(t => t.pnl !== undefined);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const winningTrades = completedTrades.filter(t => t.pnl! > 0);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const losingTrades = completedTrades.filter(t => t.pnl! < 0);
     
     const winRate = completedTrades.length > 0 
       ? winningTrades.length / completedTrades.length 
       : 0;
     
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const grossProfit = winningTrades.reduce((sum, t) => sum + t.pnl!, 0);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const grossLoss = Math.abs(losingTrades.reduce((sum, t) => sum + t.pnl!, 0));
     const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : 0;
     

@@ -20,7 +20,9 @@ program
   .option('--end <date>', 'End date', '2023-12-31')
   .option('--strategy <strategy>', 'Strategy to use', 'trend-following')
   .action(async (options) => {
+    // eslint-disable-next-line no-console
     console.log('Running backtest with options:', options);
+    // eslint-disable-next-line no-console
     console.log('Note: Full implementation requires running example code');
   });
 
@@ -30,7 +32,9 @@ program
   .argument('<name>', 'Project name')
   .option('-t, --template <template>', 'Template to use', 'basic')
   .action((name, options) => {
+    // eslint-disable-next-line no-console
     console.log(`Initializing project: ${name} with template: ${options.template}`);
+    // eslint-disable-next-line no-console
     console.log('Note: Template scaffolding not yet implemented');
   });
 

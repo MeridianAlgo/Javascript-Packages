@@ -23,13 +23,14 @@ export class AdvancedVolatilityIndicators {
    * Simplified implementation using method of moments
    */
   static garch(returns: Series, options: GarchOptions = {}): GarchResult {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { maxIter = 100 } = options;
     
     // Initial parameter estimates using method of moments
     const mean = returns.reduce((a, b) => a + b, 0) / returns.length;
     const variance = returns.reduce((sum, r) => sum + Math.pow(r - mean, 2), 0) / returns.length;
     
-    let omega = variance * 0.01;
+    const omega = variance * 0.01;
     let alpha = 0.1;
     let beta = 0.85;
     

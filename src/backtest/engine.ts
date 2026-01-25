@@ -2,7 +2,7 @@
  * Time-based backtest engine
  */
 
-import { Bar, Position, PortfolioSnapshot } from '../core';
+import { Position, PortfolioSnapshot } from '../core';
 import { BacktestConfig, BacktestResult, Trade, PerformanceMetrics } from './types';
 import { FixedCommission, FixedSlippage } from './costs';
 

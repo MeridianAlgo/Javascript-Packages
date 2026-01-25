@@ -3,7 +3,7 @@
  */
 
 import { Series } from '../core';
-import { MathUtils, StatUtils } from '../utils';
+import { MathUtils } from '../utils';
 
 export class AdvancedMath {
     /**
@@ -30,11 +30,11 @@ export class AdvancedMath {
         const logTau = tau.map(t => Math.log(t));
 
         // Simple linear regression slope
-        let n = logLags.length;
-        let sumX = logLags.reduce((a, b) => a + b, 0);
-        let sumY = logTau.reduce((a, b) => a + b, 0);
-        let sumXY = logLags.reduce((sum, x, i) => sum + x * logTau[i], 0);
-        let sumXX = logLags.reduce((sum, x) => sum + x * x, 0);
+        const n = logLags.length;
+        const sumX = logLags.reduce((a, b) => a + b, 0);
+        const sumY = logTau.reduce((a, b) => a + b, 0);
+        const sumXY = logLags.reduce((sum, x, i) => sum + x * logTau[i], 0);
+        const sumXX = logLags.reduce((sum, x) => sum + x * x, 0);
 
         const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
         return slope * 2.0; // Hurst exponent is slope * 2 for this variance method
@@ -64,6 +64,7 @@ export class AdvancedMath {
     private static getWeights(d: number, threshold: number): number[] {
         const weights: number[] = [1];
         let k = 1;
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             const w = -weights[weights.length - 1] * (d - k + 1) / k;
             if (Math.abs(w) < threshold) break;

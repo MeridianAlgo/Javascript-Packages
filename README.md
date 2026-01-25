@@ -111,7 +111,7 @@ src/
 
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to get involved.
+We welcome contributions! See CONTRIBUTING.md for details on how to get involved.
 
 ---
 

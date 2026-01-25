@@ -1,241 +1,177 @@
-/**
- * Time and calendar utilities
- */
+# Changelog
 
-import { Bar } from '../core';
+All notable changes to this project will be documented in this file.
 
-export class TimeUtils {
-  /**
-   * Check if market is open
-   * Simplified - assumes US market hours (9:30 AM - 4:00 PM ET)
-   */
-  static isMarketOpen(date: Date, exchange: string = 'NYSE'): boolean {
-    // Check if weekend
-    const day = date.getDay();
-    if (day === 0 || day === 6) return false;
-    
-    // Check if holiday (simplified - major US holidays)
-    if (this.isHoliday(date, exchange)) return false;
-    
-    // Check market hours (simplified - assumes ET timezone)
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const time = hours * 60 + minutes;
-    
-    // 9:30 AM = 570 minutes, 4:00 PM = 960 minutes
-    return time >= 570 && time < 960;
-  }
-  
-  /**
-   * Get next market open time
-   */
-  static nextMarketOpen(date: Date, exchange: string = 'NYSE'): Date {
-    const next = new Date(date);
-    
-    // If it's a weekend, move to Monday
-    while (next.getDay() === 0 || next.getDay() === 6) {
-      next.setDate(next.getDate() + 1);
-    }
-    
-    // Set to 9:30 AM
-    next.setHours(9, 30, 0, 0);
-    
-    // If we're past market close, move to next day
-    if (date.getHours() >= 16) {
-      next.setDate(next.getDate() + 1);
-      while (next.getDay() === 0 || next.getDay() === 6) {
-        next.setDate(next.getDate() + 1);
-      }
-    }
-    
-    // Skip holidays
-    while (this.isHoliday(next, exchange)) {
-      next.setDate(next.getDate() + 1);
-      while (next.getDay() === 0 || next.getDay() === 6) {
-        next.setDate(next.getDate() + 1);
-      }
-    }
-    
-    return next;
-  }
-  
-  /**
-   * Count trading days between two dates
-   */
-  static tradingDays(start: Date, end: Date, exchange: string = 'NYSE'): number {
-    let count = 0;
-    const current = new Date(start);
-    
-    while (current <= end) {
-      if (this.isMarketOpen(current, exchange)) {
-        count++;
-      }
-      current.setDate(current.getDate() + 1);
-    }
-    
-    return count;
-  }
-  
-  /**
-   * Check if date is a holiday
-   * Simplified - major US holidays only
-   */
-  static isHoliday(date: Date, exchange: string = 'NYSE'): boolean {
-    const month = date.getMonth();
-    const day = date.getDate();
-    const dayOfWeek = date.getDay();
-    
-    // New Year's Day
-    if (month === 0 && day === 1) return true;
-    
-    // Martin Luther King Jr. Day (3rd Monday in January)
-    if (month === 0 && dayOfWeek === 1 && day >= 15 && day <= 21) return true;
-    
-    // Presidents' Day (3rd Monday in February)
-    if (month === 1 && dayOfWeek === 1 && day >= 15 && day <= 21) return true;
-    
-    // Good Friday (approximate - Friday before Easter)
-    // Simplified: skip complex Easter calculation
-    
-    // Memorial Day (last Monday in May)
-    if (month === 4 && dayOfWeek === 1 && day >= 25) return true;
-    
-    // Independence Day
-    if (month === 6 && day === 4) return true;
-    
-    // Labor Day (1st Monday in September)
-    if (month === 8 && dayOfWeek === 1 && day <= 7) return true;
-    
-    // Thanksgiving (4th Thursday in November)
-    if (month === 10 && dayOfWeek === 4 && day >= 22 && day <= 28) return true;
-    
-    // Christmas
-    if (month === 11 && day === 25) return true;
-    
-    return false;
-  }
-  
-  /**
-   * Resample bars to different timeframe
-   */
-  static resample(bars: Bar[], interval: string): Bar[] {
-    if (bars.length === 0) return [];
-    
-    const intervalMinutes = this.parseInterval(interval);
-    const resampled: Bar[] = [];
-    
-    let currentBar: Bar | null = null;
-    let currentBucket = 0;
-    
-    for (const bar of bars) {
-      const barBucket = Math.floor(bar.t.getTime() / (intervalMinutes * 60 * 1000));
-      
-      if (currentBar === null || barBucket !== currentBucket) {
-        if (currentBar) {
-          resampled.push(currentBar);
-        }
-        
-        currentBar = {
-          t: new Date(barBucket * intervalMinutes * 60 * 1000),
-          o: bar.o,
-          h: bar.h,
-          l: bar.l,
-          c: bar.c,
-          v: bar.v,
-          symbol: bar.symbol
-        };
-        currentBucket = barBucket;
-      } else {
-        // Update current bar
-        currentBar.h = Math.max(currentBar.h, bar.h);
-        currentBar.l = Math.min(currentBar.l, bar.l);
-        currentBar.c = bar.c;
-        currentBar.v += bar.v;
-      }
-    }
-    
-    if (currentBar) {
-      resampled.push(currentBar);
-    }
-    
-    return resampled;
-  }
-  
-  /**
-   * Parse interval string to minutes
-   */
-  private static parseInterval(interval: string): number {
-    const match = interval.match(/^(\d+)([mhd])$/);
-    if (!match) throw new Error(`Invalid interval: ${interval}`);
-    
-    const value = parseInt(match[1]);
-    const unit = match[2];
-    
-    switch (unit) {
-      case 'm': return value;
-      case 'h': return value * 60;
-      case 'd': return value * 60 * 24;
-      default: throw new Error(`Invalid interval unit: ${unit}`);
-    }
-  }
-  
-  /**
-   * Format date as ISO string (YYYY-MM-DD)
-   */
-  static formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
-  }
-  
-  /**
-   * Parse date string
-   */
-  static parseDate(dateStr: string): Date {
-    return new Date(dateStr);
-  }
-  
-  /**
-   * Get start of day
-   */
-  static startOfDay(date: Date): Date {
-    const result = new Date(date);
-    result.setHours(0, 0, 0, 0);
-    return result;
-  }
-  
-  /**
-   * Get end of day
-   */
-  static endOfDay(date: Date): Date {
-    const result = new Date(date);
-    result.setHours(23, 59, 59, 999);
-    return result;
-  }
-  
-  /**
-   * Add days to date
-   */
-  static addDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
-  
-  /**
-   * Add trading days to date
-   */
-  static addTradingDays(date: Date, days: number, exchange: string = 'NYSE'): Date {
-    let result = new Date(date);
-    let count = 0;
-    
-    while (count < days) {
-      result = this.addDays(result, 1);
-      if (this.isMarketOpen(result, exchange)) {
-        count++;
-      }
-    }
-    
-    return result;
-  }
-}
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-01-25
 
+### Added
+- Advanced Quantitative Indicators: Hurst Exponent, Fractional Differencing, Ornstein-Uhlenbeck (OU) process estimation.
+- Kalman Filter implementation for signal smoothing and state estimation.
+- Black-Litterman Portfolio Optimization model.
+- Unified single-package architecture for streamlined usage and improved performance.
+- Automated CI/CD workflow with Node 22 support.
+
+### Changed
+- **Major Structure Reductions**: Consolidated 12 independent packages into a single unified meridianalgo package.
+- Migrated all source code from individual packages/*/src to root src/.
+- Updated all internal imports to relative paths.
+- Rebranded as meridianalgo (removing @meridianalgo/ scope for simplicity in the unified version).
+- Improved Technical Indicators with consistent NaN padding and robust empty-array handling.
+
+### Fixed
+- Fixed Bollinger Bands calculation errors where bands were misaligned with the middle line.
+- Corrected HMM regime detection crash on short datasets.
+- Adjusted risk metrics conventions to match industry standards (negative drawdowns).
+
+## [2.0.0] - 2025-10-13
+
+### Added
+
+#### Core Framework
+- Complete monorepo architecture with 15 packages
+- Plugin system for extensibility
+- TypeScript support with full type definitions
+- Comprehensive test coverage
+
+#### Data Layer
+- Yahoo Finance adapter (fully functional)
+- Polygon.io adapter with rate limiting
+- Binance adapter with WebSocket streaming
+- Alpaca adapter with paper/live trading support
+- Data manager with caching and quality validation
+- Corporate action handling
+- Gap filling and normalization
+
+#### Indicators (100+)
+- Classic indicators: SMA, EMA, RSI, MACD, Bollinger Bands, Stochastic, ATR
+- Advanced volatility: GARCH, EWMA, Realized Volatility
+- Regime detection: HMM, Change Point Detection
+- Microstructure: VPIN, Order Imbalance, Kyle's Lambda
+- Feature engineering: PCA, Lags, Rolling Statistics
+- Seasonality detection: Day-of-week, Month-end, Holiday effects
+
+#### Strategies
+- Trend Following strategy
+- Mean Reversion strategy
+- Pairs Trading strategy
+- Momentum strategy
+- Strategy composition (blend, vote, regime-gating)
+- Position sizing (Kelly, Vol Target, Drawdown Aware)
+- Trade rules and constraints
+
+#### Backtesting
+- Time-based backtest engine
+- Event-driven backtest engine
+- Realistic cost models (commission, slippage, borrow fees)
+- Walk-forward analysis
+- Multi-scenario testing
+- Corporate action handling
+- Performance metrics calculation
+
+#### Risk Management
+- VaR (Historical, Parametric, Monte Carlo)
+- CVaR, Max Drawdown, Volatility
+- Sharpe, Sortino, Calmar, Information Ratios
+- Performance Attribution (Brinson, Factor Exposure)
+- Stress Testing (scenario, historical, Monte Carlo)
+- Real-time monitoring and alerts
+- Reporting system (PDF/HTML tear sheets)
+
+#### Portfolio Optimization
+- Mean-Variance Optimization
+- Black-Litterman
+- Risk Parity
+- Hierarchical Risk Parity (HRP)
+- Constraint handling (min/max weights, long-only, leverage, sector limits)
+- Robustness techniques (covariance shrinkage, resampled frontier)
+- Multi-objective optimization
+
+#### Machine Learning
+- Random Forest, Gradient Boosting
+- Neural Networks, LSTM, GRU
+- ARIMA, VAR, Kalman Filter
+- Hyperparameter tuning (grid search, random search, Bayesian)
+- Online learning with drift detection
+- Feature selection and importance
+- AutoML system
+- Labeling methods (triple-barrier, meta-labeling)
+
+#### Execution
+- Paper trading (fully functional)
+- Live trading (Alpaca integration)
+- Order Management System
+- Pre-trade risk checks
+- Risk limits enforcement
+- Smart order routing
+- Bracket orders
+- Compliance logging
+
+#### Optimization
+- Grid search
+- Random search
+- Bayesian optimization
+- Genetic algorithms
+- Parallel evaluation
+- Overfitting prevention
+- Result visualization
+
+#### Visualization
+- Equity curves
+- Drawdown charts
+- Return distributions
+- Correlation heatmaps
+- Factor exposure charts
+- Dashboard system
+- Export functionality (CSV, JSON, PNG, SVG, PDF)
+
+#### Pipeline & Workflow
+- DAG execution
+- Feature store with versioning
+- Scheduling support (cron, event-triggered)
+- State management (SQLite, PostgreSQL, file-based)
+- Pipeline monitoring
+
+#### Compliance & Reproducibility
+- Audit logging
+- Run management
+- Artifact tracking
+- Policy enforcement
+- Snapshot system
+- Regression testing
+
+#### Developer Tools
+- CLI for common tasks (init, backtest, optimize, live, report)
+- Project templates
+- Configuration validation (Zod)
+- Progress reporting
+- Comprehensive documentation
+- Code examples
+
+#### Utilities
+- Math utilities (mean, std, correlation, percentile, skewness, kurtosis)
+- Statistical tests (t-test, chi-square, ADF, Jarque-Bera, bootstrap)
+- Time utilities (market hours, trading days, holidays, resampling)
+- Structured logging with trace IDs
+
+### Changed
+- Migrated from single package to monorepo architecture
+- Improved TypeScript type safety
+- Enhanced error handling
+- Optimized performance for large datasets
+
+### Fixed
+- Various bug fixes and improvements
+
+## [1.0.0] - Previous Version
+
+### Added
+- Initial release with basic indicators
+- Simple backtesting functionality
+- Basic performance metrics
+
+---
+
+For more details, see the [documentation](docs/).

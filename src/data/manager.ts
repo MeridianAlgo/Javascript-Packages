@@ -82,11 +82,7 @@ export class DataManager {
     const filled: Bar[] = [bars[0]];
     
     for (let i = 1; i < bars.length; i++) {
-      const prev = bars[i - 1];
       const curr = bars[i];
-      
-      // Check for gap (more than expected interval)
-      const timeDiff = curr.t.getTime() - prev.t.getTime();
       
       // If gap detected, fill based on method
       if (method === 'forward') {

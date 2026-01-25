@@ -8,6 +8,7 @@ export class GridSearchOptimizer implements Optimizer {
   async optimize(
     objective: ObjectiveFunction,
     space: ParameterSpace,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     options: OptimizationOptions = {}
   ): Promise<ParameterOptimizationResult> {
     const combinations = this.generateCombinations(space);

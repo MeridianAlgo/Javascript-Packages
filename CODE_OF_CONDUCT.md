@@ -1,241 +1,198 @@
-/**
- * Time and calendar utilities
- */
+# Code of Conduct
 
-import { Bar } from '../core';
+## Our Commitment
 
-export class TimeUtils {
-  /**
-   * Check if market is open
-   * Simplified - assumes US market hours (9:30 AM - 4:00 PM ET)
-   */
-  static isMarketOpen(date: Date, exchange: string = 'NYSE'): boolean {
-    // Check if weekend
-    const day = date.getDay();
-    if (day === 0 || day === 6) return false;
-    
-    // Check if holiday (simplified - major US holidays)
-    if (this.isHoliday(date, exchange)) return false;
-    
-    // Check market hours (simplified - assumes ET timezone)
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const time = hours * 60 + minutes;
-    
-    // 9:30 AM = 570 minutes, 4:00 PM = 960 minutes
-    return time >= 570 && time < 960;
-  }
-  
-  /**
-   * Get next market open time
-   */
-  static nextMarketOpen(date: Date, exchange: string = 'NYSE'): Date {
-    const next = new Date(date);
-    
-    // If it's a weekend, move to Monday
-    while (next.getDay() === 0 || next.getDay() === 6) {
-      next.setDate(next.getDate() + 1);
-    }
-    
-    // Set to 9:30 AM
-    next.setHours(9, 30, 0, 0);
-    
-    // If we're past market close, move to next day
-    if (date.getHours() >= 16) {
-      next.setDate(next.getDate() + 1);
-      while (next.getDay() === 0 || next.getDay() === 6) {
-        next.setDate(next.getDate() + 1);
-      }
-    }
-    
-    // Skip holidays
-    while (this.isHoliday(next, exchange)) {
-      next.setDate(next.getDate() + 1);
-      while (next.getDay() === 0 || next.getDay() === 6) {
-        next.setDate(next.getDate() + 1);
-      }
-    }
-    
-    return next;
-  }
-  
-  /**
-   * Count trading days between two dates
-   */
-  static tradingDays(start: Date, end: Date, exchange: string = 'NYSE'): number {
-    let count = 0;
-    const current = new Date(start);
-    
-    while (current <= end) {
-      if (this.isMarketOpen(current, exchange)) {
-        count++;
-      }
-      current.setDate(current.getDate() + 1);
-    }
-    
-    return count;
-  }
-  
-  /**
-   * Check if date is a holiday
-   * Simplified - major US holidays only
-   */
-  static isHoliday(date: Date, exchange: string = 'NYSE'): boolean {
-    const month = date.getMonth();
-    const day = date.getDate();
-    const dayOfWeek = date.getDay();
-    
-    // New Year's Day
-    if (month === 0 && day === 1) return true;
-    
-    // Martin Luther King Jr. Day (3rd Monday in January)
-    if (month === 0 && dayOfWeek === 1 && day >= 15 && day <= 21) return true;
-    
-    // Presidents' Day (3rd Monday in February)
-    if (month === 1 && dayOfWeek === 1 && day >= 15 && day <= 21) return true;
-    
-    // Good Friday (approximate - Friday before Easter)
-    // Simplified: skip complex Easter calculation
-    
-    // Memorial Day (last Monday in May)
-    if (month === 4 && dayOfWeek === 1 && day >= 25) return true;
-    
-    // Independence Day
-    if (month === 6 && day === 4) return true;
-    
-    // Labor Day (1st Monday in September)
-    if (month === 8 && dayOfWeek === 1 && day <= 7) return true;
-    
-    // Thanksgiving (4th Thursday in November)
-    if (month === 10 && dayOfWeek === 4 && day >= 22 && day <= 28) return true;
-    
-    // Christmas
-    if (month === 11 && day === 25) return true;
-    
-    return false;
-  }
-  
-  /**
-   * Resample bars to different timeframe
-   */
-  static resample(bars: Bar[], interval: string): Bar[] {
-    if (bars.length === 0) return [];
-    
-    const intervalMinutes = this.parseInterval(interval);
-    const resampled: Bar[] = [];
-    
-    let currentBar: Bar | null = null;
-    let currentBucket = 0;
-    
-    for (const bar of bars) {
-      const barBucket = Math.floor(bar.t.getTime() / (intervalMinutes * 60 * 1000));
-      
-      if (currentBar === null || barBucket !== currentBucket) {
-        if (currentBar) {
-          resampled.push(currentBar);
-        }
-        
-        currentBar = {
-          t: new Date(barBucket * intervalMinutes * 60 * 1000),
-          o: bar.o,
-          h: bar.h,
-          l: bar.l,
-          c: bar.c,
-          v: bar.v,
-          symbol: bar.symbol
-        };
-        currentBucket = barBucket;
-      } else {
-        // Update current bar
-        currentBar.h = Math.max(currentBar.h, bar.h);
-        currentBar.l = Math.min(currentBar.l, bar.l);
-        currentBar.c = bar.c;
-        currentBar.v += bar.v;
-      }
-    }
-    
-    if (currentBar) {
-      resampled.push(currentBar);
-    }
-    
-    return resampled;
-  }
-  
-  /**
-   * Parse interval string to minutes
-   */
-  private static parseInterval(interval: string): number {
-    const match = interval.match(/^(\d+)([mhd])$/);
-    if (!match) throw new Error(`Invalid interval: ${interval}`);
-    
-    const value = parseInt(match[1]);
-    const unit = match[2];
-    
-    switch (unit) {
-      case 'm': return value;
-      case 'h': return value * 60;
-      case 'd': return value * 60 * 24;
-      default: throw new Error(`Invalid interval unit: ${unit}`);
-    }
-  }
-  
-  /**
-   * Format date as ISO string (YYYY-MM-DD)
-   */
-  static formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
-  }
-  
-  /**
-   * Parse date string
-   */
-  static parseDate(dateStr: string): Date {
-    return new Date(dateStr);
-  }
-  
-  /**
-   * Get start of day
-   */
-  static startOfDay(date: Date): Date {
-    const result = new Date(date);
-    result.setHours(0, 0, 0, 0);
-    return result;
-  }
-  
-  /**
-   * Get end of day
-   */
-  static endOfDay(date: Date): Date {
-    const result = new Date(date);
-    result.setHours(23, 59, 59, 999);
-    return result;
-  }
-  
-  /**
-   * Add days to date
-   */
-  static addDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
-  
-  /**
-   * Add trading days to date
-   */
-  static addTradingDays(date: Date, days: number, exchange: string = 'NYSE'): Date {
-    let result = new Date(date);
-    let count = 0;
-    
-    while (count < days) {
-      result = this.addDays(result, 1);
-      if (this.isMarketOpen(result, exchange)) {
-        count++;
-      }
-    }
-    
-    return result;
-  }
-}
+We are committed to providing a welcoming, inclusive, and harassment-free environment for everyone, regardless of age, body size, disability, ethnicity, gender identity and expression, level of experience, nationality, personal appearance, race, religion, or sexual identity and orientation.
 
+## Our Standards
 
+### Expected Behavior
+
+Participants in our community are expected to:
+
+- Use welcoming and inclusive language
+- Be respectful of differing viewpoints and experiences
+- Gracefully accept constructive criticism
+- Focus on what is best for the community
+- Show empathy towards other community members
+- Provide and receive feedback professionally
+- Acknowledge and learn from mistakes
+- Prioritize the success of the overall project
+
+### Unacceptable Behavior
+
+The following behaviors are considered unacceptable:
+
+- Harassment, intimidation, or discrimination in any form
+- Offensive, derogatory, or discriminatory comments
+- Personal or political attacks
+- Public or private harassment
+- Publishing others' private information without permission
+- Trolling, insulting, or derogatory comments
+- Unwelcome sexual attention or advances
+- Other conduct which could reasonably be considered inappropriate in a professional setting
+- Advocating for or encouraging any of the above behaviors
+
+## Scope
+
+This Code of Conduct applies to all project spaces, including:
+
+- GitHub repositories (issues, pull requests, discussions)
+- Project communication channels (Discord, Slack, email)
+- Project events (virtual or in-person)
+- Social media when representing the project
+- Any other project-related forums or spaces
+
+This Code of Conduct also applies when an individual is representing the project in public spaces.
+
+## Enforcement
+
+### Reporting
+
+If you experience or witness unacceptable behavior, please report it by:
+
+1. Contacting the project maintainers via email
+2. Opening a private issue on GitHub
+3. Reaching out to a trusted community moderator
+
+All reports will be handled with discretion and confidentiality.
+
+### What to Include in a Report
+
+When reporting an incident, please include:
+
+- Your contact information
+- Names or identifiers of individuals involved
+- Description of the behavior and context
+- Date and time of the incident
+- Any supporting documentation (screenshots, logs, etc.)
+- Any other relevant information
+
+### Response Process
+
+Upon receiving a report, maintainers will:
+
+1. Acknowledge receipt within 24 hours
+2. Review and investigate the complaint
+3. Determine appropriate action based on the severity
+4. Communicate the decision to relevant parties
+5. Take necessary enforcement action
+
+### Enforcement Actions
+
+Depending on the severity and nature of the violation, actions may include:
+
+**Warning**: A private, written warning providing clarity around the violation and explanation of why the behavior was inappropriate.
+
+**Temporary Ban**: A temporary ban from interaction in project spaces for a specified period.
+
+**Permanent Ban**: A permanent ban from all project spaces and community interaction.
+
+**Other Actions**: Any other action deemed appropriate by the maintainers, including but not limited to:
+- Removal of comments, commits, or other contributions
+- Blocking from repositories
+- Reporting to appropriate authorities if illegal activity is involved
+
+## Attribution and Enforcement Guidelines
+
+### Minor Incidents
+
+First-time minor violations will typically result in:
+- A private warning
+- Request to modify or remove offending content
+- Guidance on expected behavior
+
+### Moderate Incidents
+
+Repeated minor violations or first-time moderate violations will result in:
+- A formal written warning
+- Temporary restriction from project spaces (1-30 days)
+- Required acknowledgment of the violation
+
+### Severe Incidents
+
+Severe violations or repeated moderate violations will result in:
+- Immediate temporary or permanent ban
+- Removal of all contributions if necessary
+- Report to relevant authorities if applicable
+
+## Maintainer Responsibilities
+
+Project maintainers are responsible for:
+
+- Clarifying standards of acceptable behavior
+- Taking appropriate and fair corrective action
+- Removing, editing, or rejecting contributions that violate this Code of Conduct
+- Communicating reasons for moderation decisions when appropriate
+- Leading by example in demonstrating expected behavior
+
+Maintainers who do not follow or enforce the Code of Conduct may face temporary or permanent repercussions as determined by other members of the project leadership.
+
+## Appeals
+
+If you believe an enforcement action was unjust, you may appeal by:
+
+1. Contacting the project maintainers within 14 days
+2. Providing a detailed explanation of why you believe the action was unjust
+3. Including any supporting evidence
+
+Appeals will be reviewed by maintainers not involved in the original decision.
+
+## Community Guidelines
+
+### For Contributors
+
+- Read and follow the contributing guidelines
+- Write clear, well-documented code
+- Provide constructive feedback on pull requests
+- Be patient with newcomers
+- Help others learn and grow
+- Acknowledge the work of others
+
+### For Maintainers
+
+- Review contributions promptly and fairly
+- Provide clear, constructive feedback
+- Be transparent about decision-making
+- Recognize and appreciate contributions
+- Foster an inclusive environment
+- Lead by example
+
+### For Users
+
+- Report bugs and issues constructively
+- Provide detailed information when seeking help
+- Search for existing issues before creating new ones
+- Be respectful of maintainers' time
+- Contribute back when possible
+
+## Acknowledgment
+
+This Code of Conduct is adapted from:
+- The Contributor Covenant, version 2.1
+- The Django Code of Conduct
+- The Rust Code of Conduct
+
+## Questions
+
+If you have questions about this Code of Conduct, please:
+
+- Open a discussion on GitHub
+- Contact the project maintainers
+- Review our contributing guidelines
+
+## Updates
+
+This Code of Conduct may be updated periodically. Significant changes will be announced through:
+- GitHub releases
+- Project communication channels
+- README updates
+
+## Commitment to Improvement
+
+We are committed to continuously improving our community standards and enforcement practices. We welcome feedback on this Code of Conduct and our community processes.
+
+---
+
+Last Updated: November 30, 2025
+Version: 2.0.0

@@ -3,8 +3,7 @@
  * Combines market equilibrium with investor views
  */
 
-import { Series } from '../core';
-import { MathUtils, StatUtils } from '../utils';
+// Black-Litterman model imports
 
 export interface InvestorView {
     assets: string[];
@@ -20,11 +19,15 @@ export class BlackLittermanModel {
      */
     static calculatePosterior(
         equilibriumReturns: Record<string, number>,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         covarianceMatrix: number[][],
         views: InvestorView[],
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         tau: number = 0.05
     ): Record<string, number> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const assets = Object.keys(equilibriumReturns);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const n = assets.length;
 
         // This is a simplified version of the BL formula:
@@ -36,6 +39,7 @@ export class BlackLittermanModel {
         for (const view of views) {
             for (let i = 0; i < view.assets.length; i++) {
                 const asset = view.assets[i];
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const weight = view.weights[i];
                 const confidence = view.confidence;
 

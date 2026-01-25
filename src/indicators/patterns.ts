@@ -114,7 +114,8 @@ export function detectDoji(candle: Candlestick, threshold: number = 0.1): Patter
  * @param threshold - Threshold for shadow ratio (default: 2)
  * @returns Pattern result if hammer is detected
  */
-export function detectHammer(candle: Candlestick, threshold: number = 2): PatternResult | null {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function detectHammer(candle: Candlestick, _threshold: number = 2): PatternResult | null {
   const bodySize = getBodySize(candle);
   const lowerShadow = getLowerShadow(candle);
   const upperShadow = getUpperShadow(candle);
@@ -149,7 +150,8 @@ export function detectHammer(candle: Candlestick, threshold: number = 2): Patter
  * @param threshold - Threshold for shadow ratio (default: 2)
  * @returns Pattern result if shooting star is detected
  */
-export function detectShootingStar(candle: Candlestick, threshold: number = 2): PatternResult | null {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function detectShootingStar(candle: Candlestick, _threshold: number = 2): PatternResult | null {
   const bodySize = getBodySize(candle);
   const lowerShadow = getLowerShadow(candle);
   const upperShadow = getUpperShadow(candle);

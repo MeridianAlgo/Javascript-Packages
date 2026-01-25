@@ -35,7 +35,9 @@ export class MeanVarianceOptimizer implements PortfolioOptimizer {
     
     for (let iter = 0; iter < maxIterations; iter++) {
       // Calculate portfolio metrics
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const portReturn = this.portfolioReturn(weights, expectedReturns);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const portRisk = this.portfolioRisk(weights, covariance);
       
       // Calculate gradient (maximize Sharpe ratio)

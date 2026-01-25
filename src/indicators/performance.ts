@@ -37,6 +37,7 @@ function calculateReturns(prices: number[], method: 'simple' | 'log' = 'log'): n
  * @param returns - Array of returns
  * @returns Array of cumulative returns
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function calculateCumulativeReturns(returns: number[]): number[] {
   if (returns.length === 0) return [];
 

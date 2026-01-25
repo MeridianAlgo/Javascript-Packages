@@ -8,6 +8,7 @@ export class RiskParityOptimizer implements PortfolioOptimizer {
   optimize(
     returns: number[][],
     symbols: string[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constraints: OptimizationConstraints
   ): PortfolioOptimizationResult {
     const n = symbols.length;

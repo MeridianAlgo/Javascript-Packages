@@ -3,7 +3,6 @@
  */
 
 import { Bar, Signal } from '../core';
-import { Indicators } from '../indicators';
 import { Strategy } from './types';
 
 export interface PairsTradingParams {

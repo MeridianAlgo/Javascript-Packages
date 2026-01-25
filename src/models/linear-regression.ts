@@ -3,14 +3,15 @@
  */
 
 import { Model } from './types';
-import { MathUtils } from '../utils';
 
 export class LinearRegressionModel implements Model {
   private weights: number[] = [];
   private bias: number = 0;
   
   async train(features: number[][], labels: number[]): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const n = features.length;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const m = features[0].length;
     
     // Add bias term

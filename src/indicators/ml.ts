@@ -93,6 +93,7 @@ export class PricePredictor {
   /**
    * Train the model on historical price data
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async train(features: number[][], labels: number[]): Promise<any> {
     throw new MLError('TensorFlow.js not installed. Install @tensorflow/tfjs as a peer dependency to use ML features.');
   }
@@ -100,6 +101,7 @@ export class PricePredictor {
   /**
    * Predict future prices
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async predict(features: number[][]): Promise<number[]> {
     throw new MLError('TensorFlow.js not installed. Install @tensorflow/tfjs as a peer dependency to use ML features.');
   }
@@ -120,6 +122,7 @@ export class StrategyOptimizer {
   /**
    * K-means clustering for strategy parameter optimization
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static async kMeansCluster(data: number[][], k: number, maxIterations: number = 100): Promise<{
     centroids: number[][];
     clusters: number[][];
@@ -209,8 +212,7 @@ export class DataPreprocessor {
     const windows: number[][][] = [];
 
     for (let i = windowSize; i < data.length; i++) {
-      const window = data.slice(i - windowSize, i);
-      windows.push(window);
+      windows.push(data.slice(i - windowSize, i));
     }
 
     return windows;
@@ -231,6 +233,7 @@ export class DataPreprocessor {
     const trainData = data.slice(0, trainSize);
     const trainLabels = labels.slice(0, trainSize);
     const testData = data.slice(trainSize);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const testLabels = labels.slice(trainSize);
 
     return { trainData, trainLabels, testData, testLabels };

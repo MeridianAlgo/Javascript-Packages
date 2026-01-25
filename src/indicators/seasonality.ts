@@ -2,7 +2,7 @@
  * Seasonality detection
  */
 
-import { Bar, Series } from '../core';
+import { Bar } from '../core';
 
 export class SeasonalityIndicators {
   /**

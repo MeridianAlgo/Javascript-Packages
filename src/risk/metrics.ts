@@ -2,7 +2,7 @@
  * Risk metrics
  */
 
-import { Series, Position } from '../core';
+import { Series } from '../core';
 import { MathUtils, StatUtils } from '../utils';
 
 export class RiskMetrics {
@@ -57,7 +57,6 @@ export class RiskMetrics {
     let maxDD = 0; // Negative value
     let peak = equity[0];
     let peakIdx = 0;
-    let troughIdx = 0;
     let maxDDStart = 0;
     let maxDDEnd = 0;
 
@@ -70,7 +69,6 @@ export class RiskMetrics {
       const dd = (equity[i] - peak) / peak;
       if (dd < maxDD) {
         maxDD = dd;
-        troughIdx = i;
         maxDDStart = peakIdx;
         maxDDEnd = i;
       }

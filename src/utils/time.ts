@@ -29,7 +29,7 @@ export class TimeUtils {
   /**
    * Get next market open time
    */
-  static nextMarketOpen(date: Date, exchange: string = 'NYSE'): Date {
+  static nextMarketOpen(date: Date): Date {
     const next = new Date(date);
     
     // If it's a weekend, move to Monday
@@ -49,7 +49,7 @@ export class TimeUtils {
     }
     
     // Skip holidays
-    while (this.isHoliday(next, exchange)) {
+    while (this.isHoliday(next)) {
       next.setDate(next.getDate() + 1);
       while (next.getDay() === 0 || next.getDay() === 6) {
         next.setDate(next.getDate() + 1);
@@ -62,12 +62,12 @@ export class TimeUtils {
   /**
    * Count trading days between two dates
    */
-  static tradingDays(start: Date, end: Date, exchange: string = 'NYSE'): number {
+  static tradingDays(start: Date, end: Date): number {
     let count = 0;
     const current = new Date(start);
     
     while (current <= end) {
-      if (this.isMarketOpen(current, exchange)) {
+      if (this.isMarketOpen(current)) {
         count++;
       }
       current.setDate(current.getDate() + 1);
@@ -80,7 +80,7 @@ export class TimeUtils {
    * Check if date is a holiday
    * Simplified - major US holidays only
    */
-  static isHoliday(date: Date, exchange: string = 'NYSE'): boolean {
+  static isHoliday(date: Date): boolean {
     const month = date.getMonth();
     const day = date.getDate();
     const dayOfWeek = date.getDay();
@@ -223,13 +223,13 @@ export class TimeUtils {
   /**
    * Add trading days to date
    */
-  static addTradingDays(date: Date, days: number, exchange: string = 'NYSE'): Date {
+  static addTradingDays(date: Date, days: number): Date {
     let result = new Date(date);
     let count = 0;
     
     while (count < days) {
       result = this.addDays(result, 1);
-      if (this.isMarketOpen(result, exchange)) {
+      if (this.isMarketOpen(result)) {
         count++;
       }
     }

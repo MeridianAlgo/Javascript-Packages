@@ -25,6 +25,7 @@ export function momentum(params: MomentumParams): Strategy {
       if (!bars.has(symbol)) {
         bars.set(symbol, []);
       }
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       bars.get(symbol)!.push(bar);
       
       daysSinceRebalance++;

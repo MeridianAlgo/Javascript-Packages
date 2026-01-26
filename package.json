@@ -6,7 +6,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "meridianalgo": "./dist/cli/index.js"
+    "meridianalgo": "dist/cli/index.js"
   },
   "keywords": [
     "quantitative-finance",
@@ -35,7 +35,7 @@
   "homepage": "https://github.com/MeridianAlgo/Javascript-Packages#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MeridianAlgo/Javascript-Packages.git"
+    "url": "git+https://github.com/MeridianAlgo/Javascript-Packages.git"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -84,5 +84,10 @@
     "dist",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "type": "commonjs"
 }

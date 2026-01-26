@@ -52,3 +52,18 @@ Thumbs.db
 .yarn/
 .pnpm-store/
 
+# Test directories
+test-install/
+test-*/
+
+# Documentation build artifacts
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+
+# IDE
+*.swp
+*.swo
+*~
+
+# Release files
+release-instructions.md

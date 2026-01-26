@@ -1,6 +1,6 @@
 {
   "name": "meridianalgo",
-  "version": "2.5.3",
+  "version": "2.5.9",
   "description": "Professional-grade quantitative finance framework for JavaScript/TypeScript - algorithmic trading, backtesting, risk management, and portfolio optimization",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

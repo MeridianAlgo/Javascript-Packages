@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from '@jest/globals';
-import { createMeridian, MeridianPlugin } from './plugin';
+import { createMeridian, MeridianPlugin } from '../src/core/plugin';
 
 describe('Core Plugin System', () => {
   let meridian: ReturnType<typeof createMeridian>;

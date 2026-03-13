@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { Indicators } from './indicators';
+import { Indicators } from '../src/indicators/indicators';
 
 describe('Indicators', () => {
   const testData = [100, 102, 101, 103, 105, 104, 106, 108, 107, 109];

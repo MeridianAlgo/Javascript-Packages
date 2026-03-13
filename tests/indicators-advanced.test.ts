@@ -1,8 +1,8 @@
 import { describe, it, expect } from '@jest/globals';
-import { AdvancedVolatilityIndicators } from './advanced-volatility';
-import { RegimeIndicators } from './regime-detection';
-import { MicrostructureIndicators } from './microstructure';
-import { FeatureEngineering } from './feature-engineering';
+import { AdvancedVolatilityIndicators } from '../src/indicators/advanced-volatility';
+import { RegimeIndicators } from '../src/indicators/regime-detection';
+import { MicrostructureIndicators } from '../src/indicators/microstructure';
+import { FeatureEngineering } from '../src/indicators/feature-engineering';
 
 describe('Advanced Indicators', () => {
   const returns = [0.01, -0.02, 0.015, -0.01, 0.02, -0.015, 0.01, 0.005, -0.01, 0.02, 0.01, -0.02, 0.015, -0.01, 0.02, -0.015, 0.01, 0.005, -0.01, 0.02];

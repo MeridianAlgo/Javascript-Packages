@@ -1,8 +1,8 @@
 import { describe, it, expect } from '@jest/globals';
-import { TimeBasedEngine } from './engine';
-import { FixedCommission, FixedSlippage } from './costs';
-import { Bar } from '../core';
-import { Strategy } from '../strategies';
+import { TimeBasedEngine } from '../src/backtest/engine';
+import { FixedCommission, FixedSlippage } from '../src/backtest/costs';
+import { Bar } from '../src/core';
+import { Strategy } from '../src/strategies';
 
 describe('Backtest Engine', () => {
   const bars: Bar[] = Array.from({ length: 100 }, (_, i) => ({
@@ -115,4 +115,3 @@ describe('Backtest Engine', () => {
     });
   });
 });
-

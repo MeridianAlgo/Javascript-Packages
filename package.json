@@ -1,6 +1,6 @@
 {
   "name": "meridianalgo",
-  "version": "2.5.9",
+  "version": "2.6.0",
   "description": "Professional-grade quantitative finance framework for JavaScript/TypeScript - algorithmic trading, backtesting, risk management, and portfolio optimization",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -49,8 +49,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix",
+    "lint": "eslint src tests --ext .ts",
+    "lint:fix": "eslint src tests --ext .ts --fix",
     "clean": "rimraf dist node_modules",
     "example:basic": "ts-node examples/basic-backtest.ts",
     "example:advanced": "ts-node examples/advanced-features.ts",

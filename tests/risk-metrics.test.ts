@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
-import { RiskMetrics } from './metrics';
-import { PerformanceMetrics } from './performance';
+import { RiskMetrics } from '../src/risk/metrics';
+import { PerformanceMetrics } from '../src/risk/performance';
 
 describe('Risk Metrics', () => {
   const returns = [0.01, -0.02, 0.015, -0.01, 0.02, -0.015, 0.01, 0.005, -0.01, 0.02];
@@ -28,7 +28,7 @@ describe('Risk Metrics', () => {
     it('should calculate Conditional VaR', () => {
       const cvar95 = RiskMetrics.cvar(returns, 0.95);
       expect(cvar95).toBeLessThan(0);
-      
+
       const var95 = RiskMetrics.var(returns, 0.95, 'historical');
       expect(cvar95).toBeLessThanOrEqual(var95);
     });

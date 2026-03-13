@@ -1,9 +1,9 @@
 import { describe, it, expect } from '@jest/globals';
-import { trendFollowing } from './trend-following';
-import { meanReversion } from './mean-reversion';
-import { StrategyComposer } from './composer';
-import { PositionSizer } from './position-sizer';
-import { Bar } from '../core';
+import { trendFollowing } from '../src/strategies/trend-following';
+import { meanReversion } from '../src/strategies/mean-reversion';
+import { StrategyComposer } from '../src/strategies/composer';
+import { PositionSizer } from '../src/strategies/position-sizer';
+import { Bar } from '../src/core';
 
 describe('Strategies', () => {
   const bars: Bar[] = Array.from({ length: 50 }, (_, i) => ({
@@ -109,4 +109,3 @@ describe('Strategies', () => {
     });
   });
 });
-

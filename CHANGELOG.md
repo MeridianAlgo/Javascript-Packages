@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-04-21
+
+### Added
+- Completely rewritten professional README with 9+ runnable code examples covering indicators, advanced quant math, risk metrics, portfolio optimization, strategies, parameter search, plugins, and CLI usage.
+- Expanded documentation index linking every guide under `docs/`.
+- Performance notes and benchmark guidance.
+- Capability matrix and module map for faster discovery.
+
+### Changed
+- Major version bump to 3.0.0 signalling the unified single-package architecture is stable and production-ready on npm.
+- README restructured with badges, capability matrix, module map, and clear API import surface.
+- CLI and plugin extension points documented with concrete adapter examples.
+
+### Fixed
+- README code snippets updated to match current public API (`TimeBasedEngine`, `Indicators`, `RiskPerformanceMetrics`, `StressTesting`, `MeanVarianceOptimizer`, `BlackLittermanModel`, `RiskParityOptimizer`, `GridSearchOptimizer`).
+
 ## [4.0.0] - 2026-01-25
 
 ### Added

@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2026-05-02
+
+### Added
+- **YieldCurve module** (`src/curves/`):
+  - `YieldCurve.fit()` — Nelson-Siegel fit via tau grid + OLS.
+  - `spotRate`, `discountFactor`, `forwardRate`, `forwardRateBetween`.
+- **Credit module** (`src/credit/`):
+  - `mertonStructural` — equity-as-call structural model with PD and distance-to-default.
+  - `impliedAssetVol` — Newton-Raphson asset-vol solver.
+  - `priceCDS` — premium leg, protection leg, net PV, fair spread under piecewise-constant hazard.
+  - `survivalProbability`, `bootstrapHazardCurve` — par-spread bootstrapping.
+  - `zSpread` — parallel curve shift solver.
+  - `expectedLoss`, `portfolioExpectedLoss`, `impliedCreditSpread`, `pdFromSpread`.
+- 15 new tests (130 total passing).
+- `docs/CREDIT.md` reference.
+
 ## [3.2.0] - 2026-05-02
 
 ### Added

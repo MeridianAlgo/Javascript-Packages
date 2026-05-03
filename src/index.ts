@@ -43,5 +43,11 @@ export * from './options';
 // Stochastic models (GBM, Heston, Merton, CIR, Monte Carlo)
 export * from './stochastic';
 
+// Yield Curves (Nelson-Siegel)
+export * from './curves';
+
+// Credit Risk (Merton structural, CDS, Z-spread, expected loss)
+export * from './credit';
+
 // CLI (not exported as class usually, but internal)
 // export * from './cli';

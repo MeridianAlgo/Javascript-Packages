@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2026-05-03
+
+### Added
+- **Hierarchical Risk Parity** (`src/portfolio/hrp.ts`):
+  - `hrpAllocate` — Lopez de Prado HRP: correlation-distance clustering + recursive bisection with inverse-variance allocation. No matrix inversion.
+- **Kelly criterion** (`src/portfolio/kelly.ts`):
+  - `kellyBet`, `kellyContinuous`, `kellyMultiAsset` (Σ⁻¹μ), `fractionalKelly`.
+- **Brinson-Hood-Beebower attribution** (`src/risk/brinson.ts`):
+  - `brinsonAttribution` — decomposes active return into allocation, selection, interaction effects.
+- **Factor models** (`src/risk/factor-models.ts`):
+  - OLS factor regression via Gaussian elimination on (X'X)β = X'y.
+  - `capmRegression`, `famaFrench3`, `famaFrench5`, generic `factorRegression`.
+- **Benchmark analytics** (`src/risk/benchmark-analytics.ts`):
+  - `upCaptureRatio`, `downCaptureRatio`, `battingAverage`, `informationRatio`, `trackingError`, `activeShare` (Cremers-Petajisto).
+- **CPPI / TIPP** (`src/risk/cppi.ts`):
+  - `cppiStrategy` (constant floor), `tippStrategy` (ratcheting floor).
+- Docs: `docs/PORTFOLIO-ATTRIBUTION.md`.
+- Tests: `hrp`, `kelly`, `brinson`, `factor-models`, `benchmark-analytics`, `cppi` (199 tests pass total).
+
 ## [3.5.0] - 2026-05-03
 
 ### Added

@@ -22,11 +22,25 @@ export * from './backtest';
 export { PerformanceMetrics as RiskPerformanceMetrics } from './risk/performance';
 export { StressTesting } from './risk/stress-testing';
 export { PerformanceAttribution } from './risk/attribution';
+export * from './risk/advanced';
+export * from './risk/stress-scenarios';
+export * from './risk/risk-budgeting';
+export * from './risk/brinson';
+export * from './risk/factor-models';
+export * from './risk/benchmark-analytics';
+export * from './risk/cppi';
 
 // Portfolio Optimization
 export { MeanVarianceOptimizer } from './portfolio/mean-variance';
 export { RiskParityOptimizer } from './portfolio/risk-parity';
 export { BlackLittermanModel } from './portfolio/black-litterman';
+export { hrpAllocate } from './portfolio/hrp';
+export {
+  kellyBet,
+  kellyContinuous,
+  kellyMultiAsset,
+  fractionalKelly,
+} from './portfolio/kelly';
 
 // Optimization
 export { GridSearchOptimizer, RandomSearchOptimizer } from './optimize';

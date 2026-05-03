@@ -37,5 +37,11 @@ export * from './execution';
 // Finance (TVM, Bonds)
 export * from './finance';
 
+// Options (Black-Scholes, IV, OptionChain)
+export * from './options';
+
+// Stochastic models (GBM, Heston, Merton, CIR, Monte Carlo)
+export * from './stochastic';
+
 // CLI (not exported as class usually, but internal)
 // export * from './cli';

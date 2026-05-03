@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2026-05-02
+
+### Added
+- **GARCH family** (`src/garch/`):
+  - `fitGARCH11` — GARCH(1,1) MLE via pure-JS Nelder-Mead.
+  - `fitEGARCH` — exponential GARCH with asymmetric leverage term.
+  - `fitGJR` — Glosten-Jagannathan-Runkle GARCH with leverage indicator.
+  - `garch11Forecast`, `garch11Variances`, `egarchVariances`, `gjrVariances`.
+- **Range-based volatility estimators** (`src/indicators/range-vol.ts`):
+  - `parkinsonVolatility`, `garmanKlassVolatility`, `rogersSatchellVolatility`, `yangZhangVolatility`.
+  - `fitHARRV` — Corsi (2009) HAR-RV model with daily/weekly/monthly components.
+- **Advanced risk metrics** (`src/risk/advanced.ts`):
+  - `cornishFisherVaR` — skew/kurt-adjusted VaR.
+  - `painIndex`, `drawdownSeries`, `conditionalDrawdownAtRisk`.
+  - `topNDrawdowns` with start/trough/recovery indices.
+  - `gainToPainRatio`.
+  - `probabilisticSharpeRatio` (Bailey & Lopez de Prado).
+  - `minTrackRecordLength`.
+  - `sharpeConfidenceInterval` (bootstrap, deterministic seed).
+  - `inverseNormalCdf` (Beasley-Springer-Moro).
+- **Named stress scenarios** (`src/risk/stress-scenarios.ts`):
+  - `2008-crisis`, `covid-crash`, `dot-com`, `black-monday`, `taper-tantrum`, `asian-crisis`, `lehman-week`.
+  - `applyStressScenario` to portfolio exposure vectors.
+- **Risk budgeting** (`src/risk/risk-budgeting.ts`):
+  - `equalRiskContribution` — Spinu cyclic coordinate descent.
+  - `riskBudgetingWeights` with custom budget vector.
+- 33 new tests (163 total passing).
+- `docs/VOL-RISK.md` reference.
+
 ## [3.3.0] - 2026-05-02
 
 ### Added

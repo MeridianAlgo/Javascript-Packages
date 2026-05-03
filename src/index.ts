@@ -49,5 +49,11 @@ export * from './curves';
 // Credit Risk (Merton structural, CDS, Z-spread, expected loss)
 export * from './credit';
 
+// GARCH (1,1), EGARCH, GJR-GARCH
+export * from './garch';
+
+// Range-based volatility estimators (Parkinson, GK, RS, YZ, HAR-RV)
+export * from './indicators/range-vol';
+
 // CLI (not exported as class usually, but internal)
 // export * from './cli';

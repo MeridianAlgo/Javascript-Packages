@@ -67,3 +67,4 @@ docs/.vitepress/dist/
 
 # Release files
 release-instructions.md
+.claude-memory/

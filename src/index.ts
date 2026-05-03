@@ -34,5 +34,8 @@ export { GridSearchOptimizer, RandomSearchOptimizer } from './optimize';
 // Execution
 export * from './execution';
 
+// Finance (TVM, Bonds)
+export * from './finance';
+
 // CLI (not exported as class usually, but internal)
 // export * from './cli';

@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-05-02
+
+### Added
+- **Finance module (`src/finance/`)** with TVM and bond analytics.
+- **TVM functions** (Excel-compatible): `fv`, `pv`, `pmt`, `nper`, `ipmt`, `ppmt`, `rate`, `npv`, `irr`, `mirr`, `cagr`, `compoundInterest`, `discountFactor`, `amortizationSchedule`.
+- **Bond pricing**: `cleanPrice`, `dirtyPrice`, `accruedInterest`, `yieldToMaturity`, `macaulayDuration`, `modifiedDuration`, `convexity`, `dv01`, `priceChangeApprox`.
+- 24 new tests (90 total passing).
+- `docs/FINANCE.md` reference.
+
+### Removed
+- Stale `test-install/` directory.
+- Duplicate `pnpm-lock.yaml` (kept `package-lock.json`).
+
+### Notes
+This is **Phase 1** of a multi-phase expansion. Subsequent minor releases will add: Black-Scholes + stochastic models (3.2), yield curves + credit (3.3), risk/vol upgrade (3.4), execution algos + microstructure (3.5), HRP/Kelly/factor models (3.6), candlestick patterns + advanced indicators (3.7), ML + regime detection (3.8), Deno/Bun/UMD targets (3.9).
+
 ## [3.0.0] - 2026-04-21
 
 ### Added

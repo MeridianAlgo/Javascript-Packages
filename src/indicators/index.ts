@@ -20,3 +20,57 @@ export { MicrostructureIndicators } from './microstructure';
 export { FeatureEngineering } from './feature-engineering';
 export { SeasonalityIndicators } from './seasonality';
 
+// Candlestick patterns
+export {
+  detectDoji,
+  detectHammer,
+  detectShootingStar,
+  detectBullishEngulfing,
+  detectBearishEngulfing,
+  detectMorningStar,
+  detectEveningStar,
+  detectThreeWhiteSoldiers,
+  detectThreeBlackCrows,
+  detectHangingMan,
+  detectMarubozu,
+  detectSpinningTop,
+  detectPiercingLine,
+  detectDarkCloudCover,
+  detectTweezerTop,
+  detectTweezerBottom,
+  detectAllPatterns,
+} from './candlestick';
+
+// Streaming indicators (incremental nextValue/replace API)
+export {
+  StreamingSMA,
+  StreamingEMA,
+  StreamingRSI,
+  StreamingMACD,
+  StreamingBollinger,
+} from './streaming';
+export type { StreamingIndicator } from './streaming';
+
+// Advanced indicators (Ichimoku, Supertrend, Donchian, Keltner, etc.)
+export {
+  ichimoku,
+  supertrend,
+  donchianChannels,
+  keltnerChannels,
+  aroon,
+  choppinessIndex,
+  connorsRSI,
+  massIndex,
+  fisherTransform,
+  coppockCurve,
+  dpo,
+  elderRay,
+  pivotPoints,
+} from './advanced';
+export type {
+  IchimokuResult,
+  SupertrendResult,
+  DonchianResult,
+  PivotLevels,
+} from './advanced';
+

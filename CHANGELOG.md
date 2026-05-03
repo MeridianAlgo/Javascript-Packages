@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.7.0] - 2026-05-03
+
+### Added
+- **Candlestick patterns** (`src/indicators/candlestick.ts`):
+  - 15 detectors: doji, hammer, shooting star, bullish/bearish engulfing, morning/evening star, three white soldiers / black crows, marubozu, spinning top, piercing line, dark cloud cover, tweezer top/bottom, hanging man, plus `detectAllPatterns` aggregator.
+- **Advanced indicators** (`src/indicators/advanced.ts`):
+  - `ichimoku` (Tenkan/Kijun/Span A/B/Chikou with configurable displacement).
+  - `supertrend` (ATR-based trend with ±1 direction).
+  - `donchianChannels`, `keltnerChannels` (channels).
+  - `aroon`, `choppinessIndex`, `connorsRSI`, `massIndex`, `fisherTransform`, `coppockCurve`, `dpo`, `elderRay`, `pivotPoints` (classic floor pivots).
+- **Streaming API** (`src/indicators/streaming.ts`):
+  - `StreamingSMA`, `StreamingEMA`, `StreamingRSI`, `StreamingMACD`, `StreamingBollinger`.
+  - All implement `nextValue(x)` / `replace(x)` / `reset()` for incremental real-time use.
+  - `replace()` snapshots prior state so mid-bar tick updates don't compound.
+- Docs: `docs/INDICATORS-PATTERNS.md`.
+- Tests: `candlestick`, `advanced-indicators`, `streaming-indicators` (227 tests pass total).
+
 ## [3.6.0] - 2026-05-03
 
 ### Added

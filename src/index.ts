@@ -55,5 +55,8 @@ export * from './garch';
 // Range-based volatility estimators (Parkinson, GK, RS, YZ, HAR-RV)
 export * from './indicators/range-vol';
 
+// Microstructure (order book, spread estimators, market impact)
+export * from './microstructure';
+
 // CLI (not exported as class usually, but internal)
 // export * from './cli';

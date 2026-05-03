@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.0] - 2026-05-03
+
+### Added
+- **Execution algorithms** (`src/execution/algorithms.ts`):
+  - `vwapSchedule` — slice parent order proportional to forecasted volume profile.
+  - `twapSchedule` — equal-quantity time-weighted slicing.
+  - `povSchedule` — participation-of-volume scheduler.
+  - `implementationShortfallSchedule` — Almgren-Chriss closed-form `x_k = X·sinh(κ(T-t))/sinh(κT)` with `κ = √(λσ²/η)`.
+- **Microstructure** (`src/microstructure/`):
+  - `OrderBook` — top-of-book + L2 analytics: mid, quoted/relative spread, microprice, imbalance, market-order walk.
+  - Spread estimators: `effectiveSpread`, `realizedSpread`, `rollSpread`, `quotedSpread` (Roll 1984 implicit estimator from price autocovariance).
+  - `squareRootImpact` — BARRA-style `c·σ·√(Q/ADV)`.
+  - `almgrenChrissExpectedCost` — linear-impact expected cost + variance.
+- Docs: `docs/EXECUTION.md`.
+- Tests: `execution-algos`, `microstructure` (180 tests pass total).
+
 ## [3.4.0] - 2026-05-02
 
 ### Added

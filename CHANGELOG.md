@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.0] - 2026-05-03
+
+### Fixed
+- CI workflows (`.github/workflows/ci.yml`, `release.yml`): switch from pnpm to npm. The repo ships `package-lock.json`, so `actions/setup-node` was failing with "Dependencies lock file is not found". Replaced `pnpm/action-setup` + `pnpm install --no-frozen-lockfile` with `npm ci || npm install`.
+
+### Added
+- **Examples** under `examples/`:
+  - `ml-regime-detection.ts` — train Gaussian HMM on synthetic two-regime returns, decode with Viterbi.
+  - `walk-forward-validation.ts` — expanding-window walk-forward CV with linear model.
+  - `hrp-portfolio.ts` — Hierarchical Risk Parity allocation across 5 synthetic assets.
+  - `streaming-indicators.ts` — incremental SMA/EMA/RSI/MACD/Bollinger on tick stream.
+  - `execution-algos.ts` — VWAP/TWAP/POV/Almgren-Chriss schedules side-by-side.
+
 ## [3.8.0] - 2026-05-03
 
 ### Added

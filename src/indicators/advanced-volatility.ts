@@ -22,10 +22,7 @@ export class AdvancedVolatilityIndicators {
    * GARCH(1,1) volatility model
    * Simplified implementation using method of moments
    */
-  static garch(returns: Series, options: GarchOptions = {}): GarchResult {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { maxIter = 100 } = options;
-    
+  static garch(returns: Series, _options: GarchOptions = {}): GarchResult {
     // Initial parameter estimates using method of moments
     const mean = returns.reduce((a, b) => a + b, 0) / returns.length;
     const variance = returns.reduce((sum, r) => sum + Math.pow(r - mean, 2), 0) / returns.length;

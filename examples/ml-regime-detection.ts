@@ -2,7 +2,7 @@
  * HMM regime detection on synthetic returns.
  * Bull regime: positive drift, low vol. Bear regime: negative drift, high vol.
  */
-import { trainHMM, viterbi, logReturns } from '../src';
+import { trainHMM, viterbi } from '../src';
 
 function genRegimeReturns(n: number): { returns: number[]; truth: number[] } {
   const returns: number[] = [];

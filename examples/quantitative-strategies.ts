@@ -10,12 +10,9 @@
 import { YahooAdapter } from '@meridianalgo/data';
 import {
     Indicators,
-    AdvancedVolatilityIndicators,
     RegimeIndicators,
-    FeatureEngineering
 } from '@meridianalgo/indicators';
 import { TimeBasedEngine } from '@meridianalgo/backtest';
-import { RiskMetrics, PerformanceMetrics } from '@meridianalgo/risk';
 import { Bar, Signal, Strategy } from '@meridianalgo/core';
 
 /**
@@ -144,9 +141,6 @@ function multiFactorAlpha(params: {
             if (bars.length < params.lookback) return null;
 
             const closes = bars.slice(-params.lookback).map(b => b.c);
-            const highs = bars.slice(-params.lookback).map(b => b.h);
-            const lows = bars.slice(-params.lookback).map(b => b.l);
-            const volumes = bars.slice(-params.lookback).map(b => b.v);
 
             // Factor 1: Momentum (rate of change)
             const momentum = (closes[closes.length - 1] - closes[0]) / closes[0];
@@ -317,11 +311,6 @@ async function main() {
         console.log(`Win Rate: ${(result.metrics.winRate * 100).toFixed(2)}%`);
         console.log(`Profit Factor: ${result.metrics.profitFactor.toFixed(2)}`);
         console.log(`Total Trades: ${result.metrics.totalTrades}`);
-
-        // Calculate additional metrics
-        const returns = result.equity.slice(1).map((e, i) =>
-            (e.equity - result.equity[i].equity) / result.equity[i].equity
-        );
 
         const calmarRatio = result.metrics.annualizedReturn / Math.abs(result.metrics.maxDrawdown);
         console.log(`Calmar Ratio: ${calmarRatio.toFixed(2)}`);

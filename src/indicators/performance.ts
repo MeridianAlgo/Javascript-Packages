@@ -32,23 +32,6 @@ function calculateReturns(prices: number[], method: 'simple' | 'log' = 'log'): n
 }
 
 /**
- * Calculate cumulative returns
- * 
- * @param returns - Array of returns
- * @returns Array of cumulative returns
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function calculateCumulativeReturns(returns: number[]): number[] {
-  if (returns.length === 0) return [];
-
-  const cumulative: number[] = [1 + returns[0]];
-  for (let i = 1; i < returns.length; i++) {
-    cumulative.push(cumulative[i - 1] * (1 + returns[i]));
-  }
-  return cumulative;
-}
-
-/**
  * Sharpe Ratio
  * 
  * The Sharpe ratio measures the risk-adjusted return of an investment.

@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.10.0] - 2026-05-03
+
+### Fixed (CodeQL findings)
+- Removed unused vars / imports flagged by CodeQL:
+  - `src/portfolio/black-litterman.ts` — `assets`, `n`, `weight`.
+  - `src/portfolio/mean-variance.ts` — `portReturn`, `portRisk`.
+  - `src/models/linear-regression.ts` — `n`, `m`.
+  - `src/indicators/advanced-volatility.ts` — `maxIter` destructure (renamed to `_options`).
+  - `src/indicators/performance.ts` — orphan `calculateCumulativeReturns`.
+  - `examples/quantitative-strategies.ts` — unused `highs`, `lows`, `volumes`, `returns`, and unused imports `AdvancedVolatilityIndicators`, `FeatureEngineering`, `RiskMetrics`, `PerformanceMetrics`.
+  - `examples/risk-management.ts` — unused imports `RiskMetrics`, `PerformanceMetrics`, `Indicators`.
+  - `examples/advanced-features.ts` — unused `prices`.
+  - `examples/ml-regime-detection.ts` — unused `logReturns`.
+
+### Added
+- README expanded with detailed examples for HRP, Kelly, Brinson attribution, factor models (CAPM/FF3/FF5), execution algorithms (VWAP/TWAP/POV/Almgren-Chriss), order-book microstructure, streaming indicators, pure-JS LSTM/GRU + HMM regime detection, and CPPI/TIPP wealth protection.
+- Capability table extended to surface candlestick patterns, options pricing, fixed income, credit, and microstructure.
+
 ## [3.9.1] - 2026-05-03
 
 ### Fixed

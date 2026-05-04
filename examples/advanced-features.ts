@@ -103,8 +103,7 @@ async function main() {
   // 7. Feature Engineering
   console.log('🛠️  Feature Engineering');
   console.log('======================');
-  const prices = bars.map(b => b.c);
-  
+
   // Rolling statistics
   const rollingStats = FeatureEngineering.rollingStats(returns, 20);
   console.log('20-day Rolling Stats:');

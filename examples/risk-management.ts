@@ -9,8 +9,6 @@
  */
 
 import { YahooAdapter } from '@meridianalgo/data';
-import { RiskMetrics, PerformanceMetrics } from '@meridianalgo/risk';
-import { Indicators } from '@meridianalgo/indicators';
 
 /**
  * Calculate Historical VaR

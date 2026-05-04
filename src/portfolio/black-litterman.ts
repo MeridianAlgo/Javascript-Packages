@@ -25,11 +25,6 @@ export class BlackLittermanModel {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         tau: number = 0.05
     ): Record<string, number> {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const assets = Object.keys(equilibriumReturns);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const n = assets.length;
-
         // This is a simplified version of the BL formula:
         // E[R] = [ (tau * Sigma)^-1 + P' * Omega^-1 * P ]^-1 * [ (tau * Sigma)^-1 * Pi + P' * Omega^-1 * Q ]
 
@@ -39,8 +34,6 @@ export class BlackLittermanModel {
         for (const view of views) {
             for (let i = 0; i < view.assets.length; i++) {
                 const asset = view.assets[i];
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const weight = view.weights[i];
                 const confidence = view.confidence;
 
                 // Blend: new_return = (1-conf) * equilibrium + conf * view_estimate

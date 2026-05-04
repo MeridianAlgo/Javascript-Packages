@@ -12,7 +12,9 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6.svg?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/node/v/meridianalgo.svg?style=flat-square&color=339933&logo=node.js&logoColor=white)](https://nodejs.org)
 [![CI](https://img.shields.io/github/actions/workflow/status/MeridianAlgo/Javascript-Packages/ci.yml?style=flat-square&label=CI)](https://github.com/MeridianAlgo/Javascript-Packages/actions)
-[![Tests](https://img.shields.io/badge/tests-66%20passing-brightgreen.svg?style=flat-square)](https://github.com/MeridianAlgo/Javascript-Packages)
+[![Tests](https://img.shields.io/badge/tests-237%20passing-brightgreen.svg?style=flat-square)](https://github.com/MeridianAlgo/Javascript-Packages)
+[![Coverage](https://img.shields.io/badge/coverage-80%25%2B-brightgreen.svg?style=flat-square)](https://github.com/MeridianAlgo/Javascript-Packages)
+[![Bundle](https://img.shields.io/bundlephobia/minzip/meridianalgo?style=flat-square&label=minzip)](https://bundlephobia.com/package/meridianalgo)
 
 [Installation](#installation) · [Quick Start](#quick-start) · [Examples](#examples) · [API](#api-reference) · [Docs](./docs/INDEX.md) · [Changelog](./CHANGELOG.md)
 
@@ -30,14 +32,24 @@ Traditional JavaScript trading libraries cover indicators. MeridianAlgo covers t
 
 | Capability | What's included |
 |---|---|
-| **100+ Indicators** | Classic TA (SMA, EMA, RSI, MACD, Bollinger, ATR, Stochastic) + advanced (GARCH, Hurst, VPIN, Kalman, HMM regime detection) |
+| **100+ Indicators** | Classic TA (SMA, EMA, RSI, MACD, Bollinger, ATR, Stochastic) + advanced (Ichimoku, Supertrend, Connors RSI, Fisher, Coppock, Aroon, Donchian, Keltner, Mass Index, Choppiness, Elder Ray, Pivot Points) |
+| **Candlestick Patterns** | 15 detectors: doji, hammer, shooting star, engulfing, morning/evening star, three soldiers/crows, marubozu, spinning top, piercing, dark cloud cover, tweezers + `detectAllPatterns` aggregator |
+| **Streaming Indicators** | `StreamingSMA`/`EMA`/`RSI`/`MACD`/`Bollinger` with `nextValue`/`replace`/`reset` for real-time tick processing |
 | **Backtesting** | Event-driven time-based engine with slippage, commission, partial fills, custom cost models |
-| **Risk Analytics** | VaR (historical, parametric, Cornish-Fisher), CVaR, stress testing, factor attribution, drawdown, Sharpe, Sortino, Calmar |
-| **Portfolio Optimization** | Mean-Variance (Markowitz), Black-Litterman, Risk-Parity, constrained solvers |
+| **Risk Analytics** | VaR (historical, parametric, Cornish-Fisher), CVaR, GARCH(1,1), range volatility, stress testing, drawdown, Sharpe, Sortino, Calmar, Information Ratio, Tracking Error, Active Share, up/down capture |
+| **Portfolio Optimization** | Mean-Variance (Markowitz), Black-Litterman, **Hierarchical Risk Parity (HRP)**, Risk-Parity, **Kelly criterion** (discrete/continuous/multi-asset/fractional), constrained solvers |
+| **Performance Attribution** | **Brinson-Hood-Beebower** (allocation/selection/interaction), **CAPM**, **Fama-French 3/5-factor** OLS regression, custom multi-factor models |
+| **Stochastic Models** | GBM, Heston (stochastic vol), CIR, Merton jump-diffusion, Ornstein-Uhlenbeck, Monte Carlo |
+| **Options Pricing** | Black-Scholes, implied vol (Brent solver), full Greeks (Δ/Γ/Θ/Vega/Ρ), option chains |
+| **Fixed Income** | TVM (NPV/IRR/PMT/PV/FV), bond pricing, duration, convexity, yield curves (bootstrap, Nelson-Siegel) |
+| **Credit** | CDS pricing, hazard-rate bootstrap, Z-spread, default probability |
+| **Execution Algorithms** | VWAP, TWAP, POV, **Almgren-Chriss** Implementation Shortfall closed-form |
+| **Microstructure** | Order book mid/microprice/imbalance, quoted/effective/realized/Roll spreads, square-root + Almgren-Chriss market impact |
+| **Wealth Protection** | **CPPI** (fixed floor) and **TIPP** (ratcheting floor) dynamic strategies |
 | **Strategies** | Mean-reversion, momentum, trend-following, pairs-trading, composer for multi-strategy ensembles |
 | **Data Adapters** | Yahoo, Binance, Alpaca, Polygon — pluggable |
-| **Execution** | Paper broker, extensible broker adapter interface |
-| **ML & Statistics** | Kalman filter, ARIMA, linear regression, feature engineering, fractional differencing, Ornstein-Uhlenbeck |
+| **Execution Brokers** | Paper broker, extensible broker adapter interface |
+| **Machine Learning** | Pure-JS LSTM/GRU forward pass, walk-forward CV (expanding/rolling), feature engineering, **Gaussian HMM** (Baum-Welch + Viterbi) for regime detection, Kalman filter, ARIMA, linear regression, fractional differencing |
 | **Parameter Search** | Grid search + random search with parallelizable objective functions |
 | **Plugin System** | Drop in custom indicators, strategies, data sources, brokers |
 
@@ -257,7 +269,188 @@ registerIndicator('zscore', (values: number[], lookback = 20) => {
 });
 ```
 
-### 9. CLI
+### 9. Hierarchical Risk Parity (HRP)
+
+Lopez de Prado's clustering-based allocation. No matrix inversion — robust on near-singular covariance.
+
+```typescript
+import { hrpAllocate } from 'meridianalgo';
+
+// returns: rows = time, cols = assets
+const { weights, order } = hrpAllocate({ returns });
+console.log('HRP weights:', weights);  // sums to 1
+```
+
+### 10. Kelly Criterion
+
+```typescript
+import { kellyBet, kellyContinuous, kellyMultiAsset, fractionalKelly } from 'meridianalgo';
+
+// Discrete bet: 60% win, 2:1 payoff
+const f = kellyBet({ winProb: 0.6, winPayoff: 2, lossPayoff: 1 });
+
+// Continuous (Merton): expected return / variance
+const fc = kellyContinuous({ mu: 0.10, sigma: 0.20, riskFree: 0.02 });
+
+// Multi-asset: Σ⁻¹(μ − r·1)
+const w = kellyMultiAsset({ expectedReturns, covariance, riskFree: 0.02 });
+
+// Fractional (half-Kelly is industry standard for live trading)
+const safe = fractionalKelly(f, 0.5);
+```
+
+### 11. Brinson Performance Attribution
+
+```typescript
+import { brinsonAttribution } from 'meridianalgo';
+
+const result = brinsonAttribution({
+  segments: [
+    { name: 'Tech',     portfolioWeight: 0.40, benchmarkWeight: 0.30, portfolioReturn: 0.15, benchmarkReturn: 0.12 },
+    { name: 'Energy',   portfolioWeight: 0.20, benchmarkWeight: 0.25, portfolioReturn: 0.08, benchmarkReturn: 0.10 },
+    { name: 'Finance',  portfolioWeight: 0.40, benchmarkWeight: 0.45, portfolioReturn: 0.06, benchmarkReturn: 0.07 },
+  ],
+});
+console.log(result.totals);
+// { allocation, selection, interaction, totalActive }
+```
+
+### 12. Factor Models (CAPM / Fama-French)
+
+```typescript
+import { capmRegression, famaFrench3, famaFrench5 } from 'meridianalgo';
+
+const capm = capmRegression({ portfolioReturns, marketReturns, riskFree: rfSeries });
+console.log(`α=${capm.alpha.toFixed(4)} β=${capm.betas[0].toFixed(2)} R²=${capm.rSquared.toFixed(2)}`);
+
+const ff3 = famaFrench3({
+  portfolioReturns, marketReturns, smb, hml, riskFree: rfSeries,
+});
+// { alpha, betas: [Mkt-RF, SMB, HML], rSquared, residualStdError, n }
+```
+
+### 13. Execution Algorithms — VWAP/TWAP/POV/Almgren-Chriss
+
+```typescript
+import {
+  vwapSchedule, twapSchedule, povSchedule, implementationShortfallSchedule,
+} from 'meridianalgo';
+
+const totalQty = 100_000;
+
+const vwap = vwapSchedule({
+  totalQty,
+  volumeProfile: [0.05, 0.15, 0.20, 0.10, 0.08, 0.07, 0.08, 0.10, 0.12, 0.05],
+});
+
+const twap = twapSchedule({ totalQty, buckets: 10 });
+
+const pov = povSchedule({
+  totalQty,
+  participation: 0.10,
+  marketVolume: forecastVolume,
+});
+
+// Almgren-Chriss optimal IS: x_k = X·sinh(κ(T−t_k))/sinh(κT), κ=√(λσ²/η)
+const isq = implementationShortfallSchedule({
+  totalQty, buckets: 10,
+  sigma: 0.20, riskAversion: 1e-6,
+  gamma: 1e-7, eta: 1e-6,
+});
+
+isq.forEach(s => console.log(`bucket ${s.index}: ${Math.round(s.qty)}`));
+```
+
+### 14. Order-Book Microstructure
+
+```typescript
+import { OrderBook, rollSpread, squareRootImpact } from 'meridianalgo';
+
+const ob = new OrderBook({
+  bids: [{ price: 99.95, size: 1000 }, { price: 99.90, size: 500 }],
+  asks: [{ price: 100.05, size: 800 }, { price: 100.10, size: 600 }],
+});
+console.log('Mid:', ob.midPrice());
+console.log('Microprice:', ob.microprice());     // size-weighted mid
+console.log('Imbalance:', ob.imbalance());       // (bidSize − askSize) / total
+
+// Roll (1984) effective spread from trade prices
+const spread = rollSpread(tradePrices);
+
+// Almgren-Chriss square-root impact: c·σ·√(Q/ADV)
+const cost = squareRootImpact({ qty: 50_000, adv: 1_000_000, sigma: 0.20, c: 0.5 });
+```
+
+### 15. Streaming Indicators (Real-Time Ticks)
+
+```typescript
+import { StreamingMACD, StreamingBollinger } from 'meridianalgo';
+
+const macd = new StreamingMACD(12, 26, 9);
+const bb = new StreamingBollinger(20, 2);
+
+ws.on('tick', ({ price }) => {
+  const m = macd.nextValue(price);
+  const b = bb.nextValue(price);
+  if (m && price > b.upper) signalShort();
+});
+
+// Mid-bar revisions: replace() snapshots prior state, no compounding
+macd.replace(correctedPrice);
+```
+
+### 16. Pure-JS ML — LSTM/GRU + HMM Regime Detection
+
+Zero-dep ML primitives. No tfjs, no native bindings — runs in Node, Deno, Bun, browser.
+
+```typescript
+import {
+  LSTMCell, GRUCell, randomLSTMWeights,
+  walkForward,
+  trainHMM, viterbi,
+  lagFeatures, rollingMean, logReturns, zScore,
+} from 'meridianalgo';
+
+// Forward pass with weights trained in Python/JAX
+const cell = new LSTMCell(loadedWeights);
+const { h, c } = cell.forward(sequence);
+
+// Walk-forward time-series CV
+const cv = walkForward(X, y, {
+  mode: 'expanding', initialTrainSize: 100, testSize: 20, step: 20,
+  fit: (Xtr, ytr) => trainModel(Xtr, ytr),
+  predict: (m, Xte) => m.predict(Xte),
+});
+console.log('Mean MSE:', cv.meanMse);
+
+// HMM regime detection (bull/bear classification)
+const { params, logLik } = trainHMM(returns, 2, { maxIter: 100 });
+const states = viterbi(returns, params);  // 0 or 1 per timestep
+```
+
+### 17. Wealth Protection — CPPI / TIPP
+
+```typescript
+import { cppiStrategy, tippStrategy } from 'meridianalgo';
+
+// CPPI: fixed floor protection
+const path = cppiStrategy({
+  riskyReturns,                    // per-period risky asset returns
+  safeRate: 0.02 / 252,            // daily risk-free
+  multiplier: 3,                   // leverage on cushion
+  floorRatio: 0.80,                // protect 80% of starting wealth
+  startingValue: 1_000_000,
+});
+
+// TIPP: ratcheting floor (raises with portfolio highs)
+const tippPath = tippStrategy({
+  riskyReturns, safeRate: 0.02 / 252,
+  multiplier: 3, floorRatio: 0.80,
+  startingValue: 1_000_000,
+});
+```
+
+### 18. CLI
 
 ```bash
 npx meridianalgo backtest --symbol AAPL --start 2023-01-01 --end 2024-01-01 --strategy sma-crossover

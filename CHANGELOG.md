@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.0] - 2026-05-03
+
+### Added
+- **Pure-JS RNN cells** (`src/ml/lstm.ts`, `src/ml/gru.ts`):
+  - `LSTMCell` with `[i, f, g, o]` gate ordering, weights `Wi[4H×N]`, `Wh[4H×H]`, `b[4H]`.
+  - `GRUCell` with `[r, z, n]` gate ordering, weights `Wi`, `Wh`, `bi`, `bh`.
+  - Forward pass only — load pre-trained weights from Python/JAX for inference.
+- **Walk-forward validation** (`src/ml/walk-forward.ts`):
+  - `walkForward(X, y, cfg)` with `expanding` and `rolling` modes.
+  - Per-fold MSE/MAE/R² plus combined out-of-sample predictions.
+- **Feature engineering** (`src/ml/feature-engineer.ts`):
+  - `lagFeatures`, `rollingMean`, `rollingStd`, `logReturns`, `simpleReturns`, `zScore`, `minMaxScale`, `diff`.
+- **HMM regime detection** (`src/ml/hmm-regime.ts`):
+  - `trainHMM` — Gaussian-emission Baum-Welch with scaled forward-backward.
+  - `viterbi` — log-domain decoding.
+- Docs: `docs/ML.md`.
+- Tests: `tests/ml.test.ts` (10 tests, including 2-state regime decode >70% accuracy).
+
 ## [3.7.0] - 2026-05-03
 
 ### Added

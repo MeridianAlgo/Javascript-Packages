@@ -72,5 +72,8 @@ export * from './indicators/range-vol';
 // Microstructure (order book, spread estimators, market impact)
 export * from './microstructure';
 
+// Machine learning (LSTM/GRU forward pass, walk-forward, features, HMM regimes)
+export * from './ml';
+
 // CLI (not exported as class usually, but internal)
 // export * from './cli';

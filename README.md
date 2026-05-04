@@ -20,6 +20,10 @@
 
 ---
 
+> **🚧 Active Development Notice:** This repository is currently being updated toward **v4.0.0**. The 3.x line is stable and production-ready — pin to a specific 3.x version (e.g. `meridianalgo@^3.9`) if you need API stability while v4 is in flight. v4 will introduce expanded ML, streaming-first indicators, and broader runtime support (Deno, Bun, browser).
+
+---
+
 ## Why MeridianAlgo?
 
 Traditional JavaScript trading libraries cover indicators. MeridianAlgo covers the **entire quant stack** in one cohesive, typed, tree-shakable package:

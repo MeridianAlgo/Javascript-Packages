@@ -74,31 +74,50 @@ describe('Feature engineering', () => {
 
   test('rollingMean / rollingStd', () => {
     const m = rollingMean([1, 2, 3, 4, 5], 3);
+    expect(Number.isNaN(m[0])).toBe(true);
+    expect(Number.isNaN(m[1])).toBe(true);
     expect(m[2]).toBeCloseTo(2);
+    expect(m[3]).toBeCloseTo(3);
     expect(m[4]).toBeCloseTo(4);
+
     const s = rollingStd([1, 2, 3, 4, 5], 3);
+    expect(Number.isNaN(s[0])).toBe(true);
+    expect(Number.isNaN(s[1])).toBe(true);
     expect(s[2]).toBeCloseTo(1);
+    expect(s[3]).toBeCloseTo(1);
+    expect(s[4]).toBeCloseTo(1);
   });
 
   test('logReturns', () => {
-    const r = logReturns([100, 110]);
+    const r = logReturns([100, 110, 121]);
+    expect(Number.isNaN(r[0])).toBe(true);
     expect(r[1]).toBeCloseTo(Math.log(1.1));
+    expect(r[2]).toBeCloseTo(Math.log(121 / 110));
   });
 
   test('zScore mean ~0 std ~1', () => {
     const z = zScore([1, 2, 3, 4, 5]);
     const mean = z.reduce((s, v) => s + v, 0) / z.length;
+    const variance = z.reduce((s, v) => s + (v - mean) * (v - mean), 0) / z.length;
+    const std = Math.sqrt(variance);
     expect(mean).toBeCloseTo(0, 6);
+    expect(std).toBeCloseTo(1, 6);
   });
 
   test('minMaxScale to [0,1]', () => {
     const out = minMaxScale([10, 20, 30]);
     expect(out[0]).toBeCloseTo(0);
+    expect(out[1]).toBeCloseTo(0.5);
     expect(out[2]).toBeCloseTo(1);
   });
 
   test('diff', () => {
-    expect(diff([10, 12, 15, 14])[3]).toBe(-1);
+    const d = diff([10, 12, 15, 14]);
+    expect(d).toHaveLength(4);
+    expect(Number.isNaN(d[0])).toBe(true);
+    expect(d[1]).toBe(2);
+    expect(d[2]).toBe(3);
+    expect(d[3]).toBe(-1);
   });
 });
 
@@ -107,8 +126,8 @@ describe('HMM regime detection', () => {
     // Generate 2-regime data: low-vol then high-vol
     const lowVol: number[] = [];
     const highVol: number[] = [];
-    let s1 = 1;
-    let s2 = 2;
+    const s1 = 1;
+    const s2 = 2;
     const rng = (st: { v: number }) => {
       st.v = (st.v * 1103515245 + 12345) & 0x7fffffff;
       return (st.v / 0x7fffffff - 0.5) * 2;

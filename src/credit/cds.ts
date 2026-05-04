@@ -100,7 +100,6 @@ export function bootstrapHazardCurve(
 ): HazardSegment[] {
   const sorted = [...quotes].sort((a, b) => a.maturity - b.maturity);
   const curve: HazardSegment[] = [];
-  let prevT = 0;
 
   for (const quote of sorted) {
     const target = quote.spread;
@@ -144,7 +143,6 @@ export function bootstrapHazardCurve(
       }
     }
     curve.push({ endTime: quote.maturity, lambda: mid });
-    prevT = quote.maturity;
   }
   return curve;
 }

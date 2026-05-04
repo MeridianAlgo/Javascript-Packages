@@ -19,12 +19,6 @@ export interface HRPResult {
   order: number[];
 }
 
-function mean(xs: readonly number[]): number {
-  let s = 0;
-  for (const x of xs) s += x;
-  return s / xs.length;
-}
-
 function covMatrix(returns: readonly (readonly number[])[]): number[][] {
   const T = returns.length;
   const N = returns[0].length;
@@ -128,7 +122,9 @@ function recursiveBisection(cov: readonly number[][], order: readonly number[]):
   const w: number[] = new Array(N).fill(1);
   const stack: { lo: number; hi: number }[] = [{ lo: 0, hi: N - 1 }];
   while (stack.length > 0) {
-    const { lo, hi } = stack.pop()!;
+    const top = stack.pop();
+    if (!top) continue;
+    const { lo, hi } = top;
     if (lo >= hi) continue;
     const mid = Math.floor((lo + hi) / 2);
     const left = order.slice(lo, mid + 1);

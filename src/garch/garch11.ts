@@ -130,7 +130,7 @@ export function nelderMead(
     v[i] = v[i] !== 0 ? v[i] * 1.05 : 0.00025;
     simplex.push(v);
   }
-  let fvals = simplex.map(f);
+  const fvals = simplex.map(f);
   let iter = 0;
   for (; iter < maxIter; iter++) {
     // sort
@@ -199,7 +199,6 @@ export function garch11Forecast(
   horizon: number
 ): number[] {
   const persistence = p.alpha + p.beta;
-  const uncond = persistence < 1 ? p.omega / (1 - persistence) : lastVariance;
   const out = new Array<number>(horizon);
   let prev = p.omega + p.alpha * lastResidual * lastResidual + p.beta * lastVariance;
   out[0] = prev;

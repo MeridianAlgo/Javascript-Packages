@@ -1,5 +1,4 @@
 import {
-  factorRegression,
   capmRegression,
   famaFrench3,
 } from '../src/risk/factor-models';

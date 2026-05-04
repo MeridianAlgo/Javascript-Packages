@@ -51,7 +51,7 @@ export function riskBudgetingWeights(
     throw new Error('riskBudgetingWeights: budgets must sum to 1');
 
   const { maxIter = 1000, tol = 1e-8 } = options;
-  let w = new Array(n).fill(1 / n);
+  const w = new Array(n).fill(1 / n);
   let iter = 0;
   let prevW: number[];
   let converged = false;

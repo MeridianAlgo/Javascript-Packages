@@ -29,7 +29,7 @@ export function boxMuller(uniform: () => number): () => number {
       return v;
     }
     let u1 = uniform();
-    let u2 = uniform();
+    const u2 = uniform();
     if (u1 < 1e-12) u1 = 1e-12;
     const mag = Math.sqrt(-2 * Math.log(u1));
     const z0 = mag * Math.cos(2 * Math.PI * u2);

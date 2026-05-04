@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.1] - 2026-05-03
+
+### Fixed
+- Lint errors blocking CI:
+  - Removed unused `prevT` in `src/credit/cds.ts`, `uncond` in `src/garch/garch11.ts`, `mean()` helper in `src/portfolio/hrp.ts`.
+  - `let` → `const`: `fvals` (garch), `w` (risk-budgeting), `u2` (rng), `s1`/`s2` (ml.test).
+  - Removed unused `factorRegression` import from `tests/factor-models.test.ts`.
+  - ESLint config now ignores `_`-prefixed unused vars (consistent with TS convention).
+- Build: TypeScript can't follow `yahoo-finance2`'s ESM-only `exports` map under classic node moduleResolution. Added `src/types/yahoo-finance2.d.ts` shim covering the surface used by `YahooAdapter`.
+- Replaced `!` non-null assertion in `src/portfolio/hrp.ts` recursive bisection with explicit guard.
+
+### Added
+- `tests/ml.test.ts` — expanded coverage per AI review:
+  - `rollingMean`/`rollingStd`: assert NaN-padded prefix + multiple intermediate values.
+  - `logReturns`: assert NaN at index 0 + second-period log return.
+  - `zScore`: now also asserts std ≈ 1 (test name had claimed it).
+  - `minMaxScale`: assert midpoint scales to 0.5.
+  - `diff`: assert NaN prefix + each intermediate diff.
+- README: active-development notice pointing to upcoming v4.0.0 milestone with guidance to pin `^3.9` for stability.
+
 ## [3.9.0] - 2026-05-03
 
 ### Fixed

@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.11.1] - 2026-05-05
+
+### Fixed
+- `ARIMAModel.predict`: Fixed `diffSeeds` order (using `unshift`) to ensure correct integration of forecasts when `d > 0`.
+- `TimeUtils.addTradingDays`: Now correctly uses `isTradingDay` instead of `isMarketOpen`, ensuring holiday awareness in day addition logic.
+- `tests/utils_deep_test.ts`: Updated test date to a non-holiday (Tuesday) to avoid false failures on MLK Day.
+
+### Added
+- `tests/streaming_indicators_test.ts`: Added strict assertions for SMA, EMA, and RSI streaming logic verification.
+- `tests/run_all_deep_tests.ts`: Enhanced failure reporting to include `stdout`/`stderr` details when a test script fails.
+
 ## [3.11.0] - 2026-05-04
 
 ### Fixed

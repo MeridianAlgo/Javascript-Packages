@@ -16,11 +16,16 @@ async function main() {
   for (const file of files) {
     process.stdout.write(`🏃 Running ${file}... `);
     try {
-      execSync(`npx ts-node tests/${file}`, { stdio: 'ignore' });
+      execSync(`npx ts-node tests/${file}`, { encoding: 'utf8' });
       console.log('✅ PASSED');
       passed++;
     } catch (err) {
       console.log('❌ FAILED');
+      const execErr = err as { stderr?: string | Buffer; stdout?: string | Buffer; message?: string };
+      const stderrOutput = execErr.stderr ? execErr.stderr.toString().trim() : '';
+      const stdoutOutput = execErr.stdout ? execErr.stdout.toString().trim() : '';
+      const details = stderrOutput || stdoutOutput || execErr.message || 'No error details available.';
+      console.log(details);
       failed++;
     }
   }

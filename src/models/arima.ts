@@ -28,7 +28,7 @@ export class ARIMAModel {
     let series = [...data];
     this.diffSeeds = [];
     for (let i = 0; i < this.config.d; i++) {
-      this.diffSeeds.push(series[series.length - 1]);
+      this.diffSeeds.unshift(series[series.length - 1]);
       series = this.difference(series);
     }
     

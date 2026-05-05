@@ -245,7 +245,7 @@ export class TimeUtils {
     
     while (count < days) {
       result = this.addDays(result, 1);
-      if (this.isMarketOpen(result)) {
+      if (this.isTradingDay(result)) {
         count++;
       }
     }

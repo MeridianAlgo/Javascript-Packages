@@ -275,16 +275,16 @@ export function garmanKlassVolatility(
 
   const volatilityValues: number[] = [];
 
+  const k = 2 * Math.log(2) - 1;
   for (let i = period - 1; i < open.length; i++) {
     let sum = 0;
     for (let j = i - period + 1; j <= i; j++) {
-      const term1 = Math.pow(Math.log(high[j] / close[j]), 2) / 2;
-      const term2 = Math.pow(Math.log(low[j] / close[j]), 2) / 2;
-      const term3 = Math.pow(Math.log(close[j] / open[j]), 2);
-      sum += Math.max(0, term1 - term2 - term3);
+      const hl = Math.log(high[j] / low[j]);
+      const co = Math.log(close[j] / open[j]);
+      sum += 0.5 * hl * hl - k * co * co;
     }
-    
-    let volatility = Math.sqrt(sum / period);
+
+    let volatility = Math.sqrt(Math.max(0, sum / period));
     
     if (annualized) {
       volatility *= Math.sqrt(252);

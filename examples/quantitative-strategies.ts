@@ -7,13 +7,13 @@
  * - Multi-factor Alpha Models
  */
 
-import { YahooAdapter } from '@meridianalgo/data';
+import { YahooAdapter } from '../src';
 import {
     Indicators,
     RegimeIndicators,
-} from '@meridianalgo/indicators';
-import { TimeBasedEngine } from '@meridianalgo/backtest';
-import { Bar, Signal, Strategy } from '@meridianalgo/core';
+} from '../src';
+import { TimeBasedEngine } from '../src';
+import { Bar, Signal, Strategy } from '../src';
 
 /**
  * Statistical Arbitrage Strategy

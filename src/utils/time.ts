@@ -60,20 +60,36 @@ export class TimeUtils {
   }
   
   /**
-   * Count trading days between two dates
+   * Count trading days between two dates (inclusive).
+   * A trading day is any weekday that is not a holiday — independent
+   * of intraday market hours.
    */
   static tradingDays(start: Date, end: Date): number {
     let count = 0;
     const current = new Date(start);
-    
-    while (current <= end) {
-      if (this.isMarketOpen(current)) {
+    current.setHours(0, 0, 0, 0);
+    const last = new Date(end);
+    last.setHours(0, 0, 0, 0);
+
+    while (current <= last) {
+      if (this.isTradingDay(current)) {
         count++;
       }
       current.setDate(current.getDate() + 1);
     }
-    
+
     return count;
+  }
+
+  /**
+   * Check whether a calendar day is a trading day (weekday, non-holiday).
+   * Does not consider intraday market hours.
+   */
+  static isTradingDay(date: Date): boolean {
+    const day = date.getDay();
+    if (day === 0 || day === 6) return false;
+    if (this.isHoliday(date)) return false;
+    return true;
   }
   
   /**

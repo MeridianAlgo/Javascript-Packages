@@ -1,6 +1,6 @@
 {
   "name": "meridianalgo",
-  "version": "3.10.0",
+  "version": "3.11.0",
   "description": "Professional-grade quantitative finance framework for JavaScript/TypeScript - algorithmic trading, backtesting, risk management, and portfolio optimization",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -56,7 +56,8 @@
     "example:advanced": "ts-node examples/advanced-features.ts",
     "example:utils": "ts-node examples/utils-demo.ts",
     "example:quant": "ts-node examples/quantitative-strategies.ts",
-    "example:risk": "ts-node examples/risk-management.ts"
+    "example:risk": "ts-node examples/risk-management.ts",
+    "test:manual": "ts-node tests/comprehensive_manual_test.ts"
   },
   "dependencies": {
     "commander": "^11.1.0",

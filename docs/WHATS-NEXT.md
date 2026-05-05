@@ -4,7 +4,6 @@ We have ambitious plans for the future of MeridianAlgo. Here is what's on our ho
 
 ## Short-Term (Q1-Q2 2026)
 
-- **Enhanced Options Pricing**: Black-Scholes-Merton (BSM) and Binomial trees for Greeks calculation.
 - **WebAssembly (WASM) Core**: Compiling performance-critical math routines (Kalman Filter, Optimization) to WASM for even faster execution.
 - **Improved Visualization**: A React-based component library for plotting backtest results and indicators.
 - **Data Connector Expansion**: Native support for QuestDB and InfluxDB.
@@ -13,7 +12,7 @@ We have ambitious plans for the future of MeridianAlgo. Here is what's on our ho
 
 - **Deep Learning Integration**: Integration with TensorFlow.js and Transformers.js for sentiment analysis and price prediction.
 - **Event-Driven Engine**: A new, high-concurrency event-based engine for live trading with microsecond latency.
-- **Advanced Execution Algorithms**: Implementation of TWAP, VWAP, and POV execution strategies.
+- **Institutional Execution**: Multi-venue smart order routing and iceberg orders.
 
 ## Long-Term (2027+)
 

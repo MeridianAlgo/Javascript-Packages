@@ -3,14 +3,14 @@
  * Demonstrates GARCH, regime detection, microstructure, and feature engineering
  */
 
-import { YahooAdapter } from '@meridianalgo/data';
+import { YahooAdapter } from '../src';
 import {
   AdvancedVolatilityIndicators,
   RegimeIndicators,
   MicrostructureIndicators,
   FeatureEngineering,
   SeasonalityIndicators
-} from '@meridianalgo/indicators';
+} from '../src';
 
 async function main() {
   console.log('🚀 MeridianAlgo Advanced Features Demo\n');

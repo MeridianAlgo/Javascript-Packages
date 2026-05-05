@@ -371,7 +371,11 @@ export class Indicators {
     try {
       this._validateInput(data, period, 2);
 
-      if (data.length < period + 1) return [];
+      if (data.length < period + 1) {
+        throw new IndicatorError(
+          `Insufficient data points. Need at least ${period + 1} data points, got ${data.length}`
+        );
+      }
 
       const deltas: number[] = [];
       for (let i = 1; i < data.length; i++) {

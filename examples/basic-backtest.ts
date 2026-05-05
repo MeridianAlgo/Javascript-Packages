@@ -2,11 +2,16 @@
  * Basic backtest example
  */
 
-import { createMeridian } from '@meridianalgo/core';
-import { YahooAdapter, DataManager } from '@meridianalgo/data';
-import { indicatorsPlugin } from '@meridianalgo/indicators';
-import { trendFollowing } from '@meridianalgo/strategies';
-import { TimeBasedEngine, FixedCommission, FixedSlippage } from '@meridianalgo/backtest';
+import { 
+  createMeridian, 
+  YahooAdapter, 
+  DataManager, 
+  indicatorsPlugin, 
+  trendFollowing, 
+  TimeBasedEngine, 
+  FixedCommission, 
+  FixedSlippage 
+} from '../src';
 
 async function main() {
   // Create framework instance

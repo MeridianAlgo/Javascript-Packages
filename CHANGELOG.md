@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.11.0] - 2026-05-04
+
+### Fixed
+- `garmanKlassVolatility` now uses the correct Garman-Klass formula:
+  `0.5 * ln(H/L)^2 - (2*ln(2)-1) * ln(C/O)^2` (previously yielded 0 frequently).
+- `ARIMAModel.predict` now integrates differenced forecasts back to the
+  original series level when `d > 0` (was returning stationary forecasts).
+- `TimeUtils.tradingDays` now counts weekday/non-holiday calendar days and
+  ignores intraday market hours, fixing 0-count when called with midnight dates.
+  Added new `TimeUtils.isTradingDay(date)` helper.
+- `Indicators.rsi` now throws `IndicatorError` (instead of silently returning
+  `[]`) when input is shorter than `period + 1`, matching MACD behavior.
+
+### Added
+- Fully-implemented `meridianalgo` CLI:
+  - `meridianalgo backtest` runs a real backtest via `YahooAdapter` +
+    `TimeBasedEngine`, supports `--strategy trend-following|mean-reversion`,
+    `--fast`, `--slow`, `--cash`, `--commission`, `--slippage`, and prints a
+    JSON metrics report.
+  - `meridianalgo init <name>` scaffolds a starter project with
+    `package.json`, `tsconfig.json`, `index.ts`, and `README.md`. Supports
+    `--template basic|strategy`.
+- Module documentation: `docs/BACKTEST.md`, `CLI.md`, `CORE.md`, `CURVES.md`,
+  `DATA.md`, `GARCH.md`, `MICROSTRUCTURE.md`, `MODELS.md`, `OPTIMIZE.md`,
+  `PORTFOLIO.md`, `STOCHASTIC.md`, `TYPES.md`, `UTILS.md`.
+- Examples: `examples/stochastic-models.ts`, `volatility-modeling.ts`,
+  `yield-curve-fitting.ts`.
+- Deep manual test scripts under `tests/*_deep_test.ts`.
+
+### Changed
+- Examples use relative `../src` imports instead of unresolved
+  `@meridianalgo/*` aliases, so `npm run example:*` works without
+  `tsconfig-paths`.
+- Removed unused `paths` aliases from `tsconfig.json`.
+
 ## [3.10.0] - 2026-05-03
 
 ### Fixed (CodeQL findings)

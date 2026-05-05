@@ -3,8 +3,8 @@
  * Shows math, statistics, and time utilities
  */
 
-import { YahooAdapter } from '@meridianalgo/data';
-import { MathUtils, StatUtils, TimeUtils } from '@meridianalgo/utils';
+import { YahooAdapter } from '../src';
+import { MathUtils, StatUtils, TimeUtils } from '../src';
 
 async function main() {
   console.log('🔧 MeridianAlgo Utils Package Demo\n');

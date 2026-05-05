@@ -17,15 +17,18 @@ export class ARIMAModel {
   private maCoeffs: number[] = [];
   private mean: number = 0;
   private residuals: number[] = [];
-  
+  private diffSeeds: number[] = [];
+
   constructor(config: ARIMAConfig) {
     this.config = config;
   }
-  
+
   async train(data: Series): Promise<void> {
-    // Apply differencing
+    // Apply differencing while caching seeds for inverse integration
     let series = [...data];
+    this.diffSeeds = [];
     for (let i = 0; i < this.config.d; i++) {
+      this.diffSeeds.push(series[series.length - 1]);
       series = this.difference(series);
     }
     
@@ -59,8 +62,20 @@ export class ARIMAModel {
       
       predictions.push(forecast);
     }
-    
-    return predictions;
+
+    // Undo differencing: integrate forecasts back to original level
+    let cur = predictions;
+    for (let k = this.config.d - 1; k >= 0; k--) {
+      let prev = this.diffSeeds[k];
+      const next: number[] = [];
+      for (const v of cur) {
+        prev = prev + v;
+        next.push(prev);
+      }
+      cur = next;
+    }
+
+    return cur;
   }
   
   private difference(series: Series): Series {

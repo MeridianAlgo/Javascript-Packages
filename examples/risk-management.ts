@@ -8,7 +8,7 @@
  * - Position Sizing
  */
 
-import { YahooAdapter } from '@meridianalgo/data';
+import { YahooAdapter } from '../src';
 
 /**
  * Calculate Historical VaR

@@ -13,9 +13,7 @@ async function main() {
     console.log('[1/2] Time Utilities');
     const now = new Date();
     console.log(`  - Format Date: ${TimeUtils.formatDate(now)}`);
-    // Testing a Monday afternoon (Market should be open)
-    const monday = new Date(2024, 0, 15, 14, 0); // Jan 15, 2024 is MLK Day though!
-    // Let's pick a Tuesday Jan 16, 2024
+    // Jan 15, 2024 is MLK Day (market holiday), so test with Tuesday Jan 16, 2024.
     const tuesday = new Date(2024, 0, 16, 14, 0);
     console.log(`  - Is Market Open (Jan 16, 14:00): ${TimeUtils.isMarketOpen(tuesday)}`);
     console.log(`  - Trading Days between Jan 1 and Jan 10: ${TimeUtils.tradingDays(new Date(2024, 0, 1), new Date(2024, 0, 10))}`);

@@ -44,6 +44,25 @@ import { cornishFisherVaR } from 'meridianalgo';
 const var95 = cornishFisherVaR(returns, 0.95);  // positive number = loss
 ```
 
+## Tail-Risk Analytics
+
+Higher-moment-aware companions to the Gaussian/historical risk metrics.
+
+```ts
+import {
+  modifiedExpectedShortfall, adjustedSharpeRatio, tailRatio,
+} from 'meridianalgo';
+
+// Cornish-Fisher Expected Shortfall: mean loss in the tail beyond modified VaR
+modifiedExpectedShortfall(returns, 0.95);   // positive number = loss
+
+// Pézier-White Adjusted Sharpe: penalises negative skew & excess kurtosis
+adjustedSharpeRatio(returns, 0.02, 252);    // rf annual, periods/year
+
+// Tail ratio: right-tail magnitude / left-tail magnitude (>1 = upside-heavy)
+tailRatio(returns, 0.05);                   // 95th vs 5th percentile
+```
+
 ## Drawdown Analytics
 
 ```ts

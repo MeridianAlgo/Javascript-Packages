@@ -29,6 +29,7 @@ export * from './risk/brinson';
 export * from './risk/factor-models';
 export * from './risk/benchmark-analytics';
 export * from './risk/cppi';
+export * from './risk/tail-risk';
 
 // Portfolio Optimization
 export { MeanVarianceOptimizer } from './portfolio/mean-variance';

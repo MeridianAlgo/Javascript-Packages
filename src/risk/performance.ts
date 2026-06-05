@@ -40,8 +40,9 @@ export class PerformanceMetrics {
    */
   static calmarRatio(returns: Series, equity: Series): number {
     const annualReturn = MathUtils.mean(returns) * 252;
-    const maxDD = RiskMetrics.maxDrawdown(equity).value;
-    
+    // maxDrawdown().value is negative (or 0); Calmar uses its magnitude.
+    const maxDD = Math.abs(RiskMetrics.maxDrawdown(equity).value);
+
     return maxDD > 0 ? annualReturn / maxDD : 0;
   }
   
@@ -139,8 +140,9 @@ export class PerformanceMetrics {
    */
   static recoveryFactor(returns: Series, equity: Series): number {
     const totalReturn = equity[equity.length - 1] / equity[0] - 1;
-    const maxDD = RiskMetrics.maxDrawdown(equity).value;
-    
+    // maxDrawdown().value is negative (or 0); recovery factor uses its magnitude.
+    const maxDD = Math.abs(RiskMetrics.maxDrawdown(equity).value);
+
     return maxDD > 0 ? totalReturn / maxDD : 0;
   }
   

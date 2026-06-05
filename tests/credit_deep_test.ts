@@ -2,7 +2,7 @@
  * Deep Test for Credit Risk
  */
 
-import { expectedLoss, portfolioExpectedLoss, impliedCreditSpread, pdFromSpread } from '../src/credit/expected-loss';
+import { expectedLoss, portfolioExpectedLoss, impliedCreditSpread } from '../src/credit/expected-loss';
 import { mertonStructural, impliedAssetVol } from '../src/credit/merton-structural';
 
 async function main() {

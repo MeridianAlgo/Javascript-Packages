@@ -7,7 +7,6 @@ import {
   supertrend, 
   donchianChannels, 
   keltnerChannels,
-  aroon,
   pivotPoints,
   OHLC
 } from '../src/indicators/advanced';

@@ -5,8 +5,7 @@
 import { 
   detectDoji, 
   detectHammer, 
-  detectBullishEngulfing, 
-  detectBearishEngulfing,
+  detectBullishEngulfing,
   detectAllPatterns,
   OHLC
 } from '../src/indicators/candlestick';

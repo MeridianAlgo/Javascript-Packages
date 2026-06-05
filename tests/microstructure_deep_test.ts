@@ -4,7 +4,7 @@
 
 import { OrderBook } from '../src/microstructure/order-book';
 import { squareRootImpact, almgrenChrissExpectedCost } from '../src/microstructure/market-impact';
-import { rollSpread, effectiveSpread } from '../src/microstructure/spread-analyzer';
+import { rollSpread } from '../src/microstructure/spread-analyzer';
 
 async function main() {
   console.log('🏛️ MeridianAlgo Microstructure Deep Test\n');

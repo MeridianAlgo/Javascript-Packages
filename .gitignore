@@ -64,6 +64,7 @@ docs/.vitepress/dist/
 *.swp
 *.swo
 *~
+.claude/
 
 # Release files
 release-instructions.md

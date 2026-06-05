@@ -15,6 +15,37 @@ const greeks = blackScholesGreeks(params, 'call');  // { delta, gamma, theta, ve
 
 `q` (dividend yield) defaults to 0. Theta is per year — divide by 365 for per-day.
 
+## Higher-Order Greeks
+
+Second- and third-order sensitivities for volatility trading and risk management.
+
+```ts
+import { higherOrderGreeks } from 'meridianalgo';
+
+const params = { S: 100, K: 105, T: 0.75, r: 0.03, sigma: 0.25, q: 0.01 };
+const g = higherOrderGreeks(params, 'call');
+// {
+//   vanna,   // ∂delta/∂sigma = ∂vega/∂spot
+//   charm,   // ∂delta/∂time (delta decay, per year)
+//   vomma,   // ∂vega/∂sigma  (a.k.a. volga)
+//   veta,    // ∂vega/∂time   (per year)
+//   speed,   // ∂gamma/∂spot  (third order)
+//   zomma,   // ∂gamma/∂sigma
+//   color,   // ∂gamma/∂time  (gamma decay, per year)
+//   ultima,  // ∂vomma/∂sigma (third order)
+//   dualDelta, // ∂price/∂strike
+//   dualGamma, // ∂²price/∂strike²
+// }
+```
+
+All formulas are the closed-form Black-Scholes-Merton sensitivities (verified
+against finite differences). The time-decay Greeks — `charm`, `color`, `veta` —
+share a single convention: they are derivatives with respect to **calendar time**
+(`∂/∂t`), so a negative value means the corresponding first-order Greek shrinks as
+expiry approaches. They are quoted per year; divide by 365 for a per-day estimate.
+Degenerate inputs (expired option or non-positive volatility) return all-zero
+sensitivities.
+
 ## Implied Volatility
 
 ```ts

@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.12.0] - 2026-06-04
+
+### Added
+- **Higher-order option Greeks** (`higherOrderGreeks`): vanna, charm, vomma
+  (volga), veta, speed, zomma, color, ultima, dual delta and dual gamma for
+  European options. All closed-form formulas are verified against finite
+  differences; the time-decay Greeks (charm/color/veta) share a single calendar
+  -time (`∂/∂t`) sign convention.
+- **Tail-risk analytics** (`src/risk/tail-risk.ts`): `modifiedExpectedShortfall`
+  (Cornish-Fisher Expected Shortfall), `adjustedSharpeRatio` (Pézier-White, which
+  penalises negative skew and excess kurtosis), and `tailRatio` (right-tail vs
+  left-tail magnitude).
+- New Jest suites covering the higher-order Greeks (finite-difference
+  cross-checks) and the tail-risk metrics.
+
+### Fixed
+- `PerformanceMetrics.calmarRatio` and `PerformanceMetrics.recoveryFactor` always
+  returned `0`: they guarded with `maxDrawdown > 0` while `maxDrawdown().value` is
+  negative. Both now use the drawdown magnitude (`Math.abs`). Added regression
+  tests.
+
+### Changed
+- Upgraded dev tooling to resolve all known advisories (0 vulnerabilities, down
+  from 10): `@typescript-eslint/*` 6 → 8, `jest`/`@jest/globals`/`@types/jest`
+  29 → 30, plus patch bumps to `ts-jest`, `tsc-alias`, `@types/node`, `rimraf`.
+- ESLint config now scopes `no-console` off for the CLI and test/example scripts
+  (where console output is intentional) and removes residual unused imports, so
+  `npm run lint` passes clean.
+
 ## [3.11.1] - 2026-05-05
 
 ### Fixed

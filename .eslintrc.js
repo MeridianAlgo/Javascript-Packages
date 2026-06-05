@@ -28,4 +28,23 @@ module.exports = {
         es6: true,
         jest: true,
     },
+    overrides: [
+        {
+            // Test files and standalone audit scripts legitimately use console
+            // output and ad-hoc typing for fixtures.
+            files: ['tests/**/*.ts', 'examples/**/*.ts'],
+            rules: {
+                'no-console': 'off',
+                '@typescript-eslint/no-explicit-any': 'off',
+                '@typescript-eslint/no-non-null-assertion': 'off',
+            },
+        },
+        {
+            // The CLI's purpose is to print to stdout/stderr.
+            files: ['src/cli/**/*.ts'],
+            rules: {
+                'no-console': 'off',
+            },
+        },
+    ],
 };

@@ -36,11 +36,11 @@ Traditional JavaScript trading libraries cover indicators. MeridianAlgo covers t
 | **Candlestick Patterns** | 15 detectors: doji, hammer, shooting star, engulfing, morning/evening star, three soldiers/crows, marubozu, spinning top, piercing, dark cloud cover, tweezers + `detectAllPatterns` aggregator |
 | **Streaming Indicators** | `StreamingSMA`/`EMA`/`RSI`/`MACD`/`Bollinger` with `nextValue`/`replace`/`reset` for real-time tick processing |
 | **Backtesting** | Event-driven time-based engine with slippage, commission, partial fills, custom cost models |
-| **Risk Analytics** | VaR (historical, parametric, Cornish-Fisher), CVaR, GARCH(1,1), range volatility, stress testing, drawdown, Sharpe, Sortino, Calmar, Information Ratio, Tracking Error, Active Share, up/down capture |
+| **Risk Analytics** | VaR (historical, parametric, Cornish-Fisher), CVaR / modified Expected Shortfall, GARCH(1,1), range volatility, stress testing, drawdown, Sharpe, Sortino, Calmar, **Adjusted Sharpe (Pézier-White)**, tail ratio, Information Ratio, Tracking Error, Active Share, up/down capture |
 | **Portfolio Optimization** | Mean-Variance (Markowitz), Black-Litterman, **Hierarchical Risk Parity (HRP)**, Risk-Parity, **Kelly criterion** (discrete/continuous/multi-asset/fractional), constrained solvers |
 | **Performance Attribution** | **Brinson-Hood-Beebower** (allocation/selection/interaction), **CAPM**, **Fama-French 3/5-factor** OLS regression, custom multi-factor models |
 | **Stochastic Models** | GBM, Heston (stochastic vol), CIR, Merton jump-diffusion, Ornstein-Uhlenbeck, Monte Carlo |
-| **Options Pricing** | Black-Scholes, implied vol (Brent solver), full Greeks (Δ/Γ/Θ/Vega/Ρ), option chains |
+| **Options Pricing** | Black-Scholes, implied vol (Brent solver), full Greeks (Δ/Γ/Θ/Vega/Ρ), **higher-order Greeks** (vanna/charm/vomma/veta/speed/zomma/color/ultima/dual Δ·Γ), option chains |
 | **Fixed Income** | TVM (NPV/IRR/PMT/PV/FV), bond pricing, duration, convexity, yield curves (bootstrap, Nelson-Siegel) |
 | **Credit** | CDS pricing, hazard-rate bootstrap, Z-spread, default probability |
 | **Execution Algorithms** | VWAP, TWAP, POV, **Almgren-Chriss** Implementation Shortfall closed-form |

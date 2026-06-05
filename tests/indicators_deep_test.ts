@@ -2,7 +2,7 @@
  * Deep Test for Technical Indicators
  */
 
-import { Indicators, IndicatorError } from '../src/indicators/indicators';
+import { Indicators } from '../src/indicators/indicators';
 
 async function main() {
   console.log('📊 MeridianAlgo Indicators Deep Test\n');

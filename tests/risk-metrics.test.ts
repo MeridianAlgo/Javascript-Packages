@@ -96,6 +96,26 @@ describe('Performance Metrics', () => {
       const calmar = PerformanceMetrics.calmarRatio(returns, equity);
       expect(typeof calmar).toBe('number');
     });
+
+    it('is non-zero when there is a drawdown and positive mean return (regression)', () => {
+      // maxDrawdown().value is negative; the ratio must use its magnitude.
+      // Equity dips then recovers to a new high, so there is a real drawdown.
+      const eq = [100, 110, 90, 120];
+      const rets = [0.1, -0.18, 0.33];
+      const calmar = PerformanceMetrics.calmarRatio(rets, eq);
+      expect(calmar).not.toBe(0);
+      expect(Number.isFinite(calmar)).toBe(true);
+    });
+  });
+
+  describe('Recovery Factor', () => {
+    it('is non-zero with drawdown and positive total return (regression)', () => {
+      const eq = [100, 110, 90, 120];
+      const rets = [0.1, -0.18, 0.33];
+      const rf = PerformanceMetrics.recoveryFactor(rets, eq);
+      expect(rf).not.toBe(0);
+      expect(Number.isFinite(rf)).toBe(true);
+    });
   });
 
   describe('Information Ratio', () => {

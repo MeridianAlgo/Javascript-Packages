@@ -27,7 +27,10 @@ export class StreamingSMA implements StreamingIndicator<number, number> {
   nextValue(x: number): number {
     this.buf.push(x);
     this.sum += x;
-    if (this.buf.length > this.period) this.sum -= this.buf.shift()!;
+    if (this.buf.length > this.period) {
+      const removed = this.buf.shift();
+      if (removed !== undefined) this.sum -= removed;
+    }
     return this.buf.length === this.period ? this.sum / this.period : NaN;
   }
 

@@ -13,4 +13,5 @@ export * from './brinson';
 export * from './factor-models';
 export * from './benchmark-analytics';
 export * from './cppi';
+export * from './tail-risk';
 

@@ -57,13 +57,17 @@ console.log('CVaR (95%):', cvar95);
 
 Largest peak-to-trough decline in portfolio value.
 
-```typescript
-const maxDD = RiskMetrics.maxDrawdown(returns);
+`RiskMetrics.maxDrawdown` takes an **equity curve** (cumulative value), not a return
+series, and returns the drawdown as a negative fraction plus its location.
 
-console.log('Max Drawdown:', maxDD.maxDrawdown);
-console.log('Max Drawdown %:', maxDD.maxDrawdownPercent);
-console.log('Drawdown Duration:', maxDD.duration);
-console.log('Recovery Time:', maxDD.recoveryTime);
+```typescript
+const equity = [100, 105, 103, 110, 98, 102];
+const maxDD = RiskMetrics.maxDrawdown(equity);
+
+console.log('Max Drawdown (fraction):', maxDD.value);  // e.g. -0.1091 (negative)
+console.log('Peak index:', maxDD.start);
+console.log('Trough index:', maxDD.end);
+console.log('Drawdown duration (bars):', maxDD.duration);
 ```
 
 **Use Cases:**
@@ -145,13 +149,11 @@ console.log('Sortino Ratio:', sortino);
 
 ### Calmar Ratio
 
-Return divided by maximum drawdown.
+Annualized return divided by the magnitude of maximum drawdown. Takes the return
+series and the **equity curve**.
 
 ```typescript
-const calmar = PerformanceMetrics.calmarRatio(
-  returns,
-  maxDD.maxDrawdownPercent
-);
+const calmar = PerformanceMetrics.calmarRatio(returns, equity);
 
 console.log('Calmar Ratio:', calmar);
 ```
@@ -223,48 +225,60 @@ console.log('Profit Factor:', pf);
 - PF > 1.5: Good
 - PF > 2: Excellent
 
-### Average Win/Loss
+### Average Win/Loss Ratio
+
+Ratio of the average winning return to the average losing return.
 
 ```typescript
-const { averageWin, averageLoss } = PerformanceMetrics.averageWinLoss(returns);
+const ratio = PerformanceMetrics.avgWinLoss(returns);
+console.log('Avg Win/Loss Ratio:', ratio);
 
-console.log('Average Win:', averageWin);
-console.log('Average Loss:', averageLoss);
-console.log('Win/Loss Ratio:', averageWin / averageLoss);
+// Related single-call metrics:
+PerformanceMetrics.expectancy(returns);   // win-rate-weighted edge
+PerformanceMetrics.payoffRatio(returns);  // alias of avgWinLoss
 ```
 
 ## Portfolio Analysis
 
-### Comprehensive Performance Analysis
+### Building a Metrics Dashboard
 
-Get all metrics at once:
+Compose the individual metric functions to produce a summary:
 
 ```typescript
-const prices = [/* historical prices */];
-const benchmarkPrices = [/* benchmark prices */];
+import { RiskMetrics, PerformanceMetrics } from 'meridianalgo';
 
-const analysis = PerformanceMetrics.performanceAnalysis(
-  prices,
-  benchmarkPrices,
-  0.02  // Risk-free rate
-);
+const summary = {
+  volatility: RiskMetrics.volatility(returns),
+  sharpeRatio: PerformanceMetrics.sharpeRatio(returns, 0.02),
+  sortinoRatio: PerformanceMetrics.sortinoRatio(returns, 0.02),
+  calmarRatio: PerformanceMetrics.calmarRatio(returns, equity),
+  maxDrawdown: RiskMetrics.maxDrawdown(equity).value,
+  winRate: PerformanceMetrics.winRate(returns),
+  profitFactor: PerformanceMetrics.profitFactor(returns),
+  var95: RiskMetrics.var(returns, 0.95, 'historical'),
+  cvar95: RiskMetrics.cvar(returns, 0.95),
+  beta: RiskMetrics.beta(returns, benchmarkReturns),
+  alpha: PerformanceMetrics.alpha(returns, benchmarkReturns, 0.02),
+  informationRatio: PerformanceMetrics.informationRatio(returns, benchmarkReturns),
+};
 
-console.log('Performance Analysis:', {
-  totalReturn: analysis.totalReturn,
-  annualizedReturn: analysis.annualizedReturn,
-  volatility: analysis.volatility,
-  sharpeRatio: analysis.sharpeRatio,
-  sortinoRatio: analysis.sortinoRatio,
-  maxDrawdown: analysis.maxDrawdown,
-  calmarRatio: analysis.calmarRatio,
-  winRate: analysis.winRate,
-  profitFactor: analysis.profitFactor,
-  var95: analysis.var95,
-  cvar95: analysis.cvar95,
-  beta: analysis.beta,
-  alpha: analysis.alpha,
-  informationRatio: analysis.informationRatio
-});
+console.log('Performance summary:', summary);
+```
+
+### Tail Risk (Higher-Moment Aware)
+
+Standard VaR assumes normal returns. For skewed, fat-tailed series, use the
+Cornish-Fisher and Pézier-White estimators. See [Volatility & Tail Risk](./VOL-RISK.md).
+
+```typescript
+import {
+  cornishFisherVaR, modifiedExpectedShortfall, adjustedSharpeRatio, tailRatio,
+} from 'meridianalgo';
+
+cornishFisherVaR(returns, 0.95);            // skew/kurtosis-adjusted VaR (loss)
+modifiedExpectedShortfall(returns, 0.95);   // Cornish-Fisher Expected Shortfall
+adjustedSharpeRatio(returns, 0.02, 252);    // Sharpe penalized for skew/kurtosis
+tailRatio(returns, 0.05);                   // right-tail vs left-tail magnitude
 ```
 
 ### Tracking Error
@@ -284,65 +298,55 @@ console.log('Tracking Error:', te);
 
 Test portfolio under extreme scenarios.
 
-### Historical Stress Test
+The portfolio is an array of positions: `{ symbol, qty, avgPrice }`.
+
+### Scenario Shock
 
 ```typescript
 import { StressTesting } from 'meridianalgo';
 
-const portfolio = {
-  positions: [
-    { symbol: 'AAPL', qty: 100, price: 150 },
-    { symbol: 'GOOGL', qty: 50, price: 2800 }
-  ]
-};
+const portfolio = [
+  { symbol: 'AAPL', qty: 100, avgPrice: 150 },
+  { symbol: 'GOOGL', qty: 50, avgPrice: 2800 },
+];
 
-// Test against 2008 financial crisis
-const crisis2008 = {
-  'AAPL': -0.50,  // -50%
-  'GOOGL': -0.45  // -45%
-};
+// Apply per-symbol return shocks (e.g. a 2008-style crisis)
+const result = StressTesting.scenario(portfolio, { AAPL: -0.50, GOOGL: -0.45 });
 
-const stressResult = StressTesting.historicalScenario(
-  portfolio,
-  crisis2008
-);
+console.log('P&L:', result.pnl);
+console.log('New value:', result.newValue);
+console.log('Per-symbol breakdown:', result.breakdown);
+```
 
-console.log('Stressed Portfolio Value:', stressResult.value);
-console.log('Loss:', stressResult.loss);
-console.log('Loss %:', stressResult.lossPercent);
+### Historical Stress Test
+
+```typescript
+const hist = StressTesting.historical(portfolio, {
+  date: new Date('2008-09-15'),
+  returns: { AAPL: -0.50, GOOGL: -0.45 },
+});
+
+console.log('P&L:', hist.pnl, 'Breakdown:', hist.breakdown);
 ```
 
 ### Monte Carlo Simulation
 
-```typescript
-const simResults = StressTesting.monteCarlo(
-  portfolio,
-  {
-    simulations: 10000,
-    horizon: 252,  // 1 year
-    confidence: 0.95
-  }
-);
-
-console.log('Expected Value:', simResults.expectedValue);
-console.log('VaR (95%):', simResults.var95);
-console.log('CVaR (95%):', simResults.cvar95);
-console.log('Worst Case:', simResults.worstCase);
-console.log('Best Case:', simResults.bestCase);
-```
-
-### Sensitivity Analysis
+`monteCarlo(portfolio, meanReturns, volatilities, correlations, simulations, horizon)`:
 
 ```typescript
-const sensitivity = StressTesting.sensitivity(
+const sim = StressTesting.monteCarlo(
   portfolio,
-  'AAPL',
-  [-0.10, -0.05, 0, 0.05, 0.10]  // Price changes
+  { AAPL: 0.0004, GOOGL: 0.0003 },   // per-period mean returns
+  { AAPL: 0.02, GOOGL: 0.025 },      // per-period volatilities
+  [[1, 0.6], [0.6, 1]],              // correlation matrix
+  10000,                             // simulations
+  252,                               // horizon (bars)
 );
 
-sensitivity.forEach(result => {
-  console.log(`AAPL ${result.change * 100}%: Portfolio ${result.portfolioChange * 100}%`);
-});
+console.log('VaR (95%):', sim.var95);
+console.log('CVaR (95%):', sim.cvar95);
+console.log('Worst Case:', sim.worstCase);
+console.log('Best Case:', sim.bestCase);
 ```
 
 ## Risk Management Strategies
@@ -479,8 +483,8 @@ const scenarios = [
 ];
 
 scenarios.forEach(scenario => {
-  const result = StressTesting.historicalScenario(portfolio, scenario.shocks);
-  console.log(`${scenario.name}: ${result.lossPercent}%`);
+  const result = StressTesting.scenario(portfolio, scenario.shocks);
+  console.log(`${scenario.name}: P&L ${result.pnl}`);
 });
 ```
 

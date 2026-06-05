@@ -12,7 +12,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6.svg?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/node/v/meridianalgo.svg?style=flat-square&color=339933&logo=node.js&logoColor=white)](https://nodejs.org)
 [![CI](https://img.shields.io/github/actions/workflow/status/MeridianAlgo/Javascript-Packages/ci.yml?style=flat-square&label=CI)](https://github.com/MeridianAlgo/Javascript-Packages/actions)
-[![Tests](https://img.shields.io/badge/tests-237%20passing-brightgreen.svg?style=flat-square)](https://github.com/MeridianAlgo/Javascript-Packages)
+[![Tests](https://img.shields.io/badge/tests-258%20passing-brightgreen.svg?style=flat-square)](https://github.com/MeridianAlgo/Javascript-Packages)
 [![Coverage](https://img.shields.io/badge/coverage-80%25%2B-brightgreen.svg?style=flat-square)](https://github.com/MeridianAlgo/Javascript-Packages)
 [![Bundle](https://img.shields.io/bundlephobia/minzip/meridianalgo?style=flat-square&label=minzip)](https://bundlephobia.com/package/meridianalgo)
 
@@ -22,7 +22,7 @@
 
 ---
 
-> **🚧 Active Development Notice:** This repository is currently being updated toward **v4.0.0**. The 3.x line is stable and production-ready — pin to a specific 3.x version (e.g. `meridianalgo@^3.9`) if you need API stability while v4 is in flight. v4 will introduce expanded ML, streaming-first indicators, and broader runtime support (Deno, Bun, browser).
+> **Active Development Notice:** This repository is currently being updated toward **v4.0.0**. The 3.x line is stable and production-ready — pin to a specific 3.x version (e.g. `meridianalgo@^3.12`) if you need API stability while v4 is in flight. v4 will introduce expanded ML, streaming-first indicators, and broader runtime support (Deno, Bun, browser).
 
 ---
 
@@ -118,6 +118,7 @@ npm run example:advanced   # Advanced features
 npm run example:utils      # Math/stats utilities
 npm run example:quant      # Quantitative strategies
 npm run example:risk       # Risk management
+npm run example:greeks     # Higher-order Greeks & tail-risk analytics
 ```
 
 ### 1. Technical Indicators
@@ -158,18 +159,27 @@ const smoothed = prices.map((p) => kf.filter(p));
 ### 3. Risk Metrics
 
 ```typescript
-import { RiskPerformanceMetrics, StressTesting } from 'meridianalgo';
+import { RiskMetrics, RiskPerformanceMetrics, StressTesting } from 'meridianalgo';
 
 const returns = [0.01, -0.02, 0.015, -0.005, 0.03, -0.01];
+const equity = [100, 101, 98.98, 100.47, 99.97, 102.97, 101.94];
 
-RiskPerformanceMetrics.sharpe(returns, 0.02);       // risk-free rate 2%
-RiskPerformanceMetrics.sortino(returns, 0.02);
-RiskPerformanceMetrics.calmar(returns);
-RiskPerformanceMetrics.valueAtRisk(returns, 0.95);  // 95% VaR
-RiskPerformanceMetrics.cvar(returns, 0.95);         // Expected Shortfall
+// Risk-adjusted performance (annualized by default)
+RiskPerformanceMetrics.sharpeRatio(returns, 0.02);    // risk-free rate 2%
+RiskPerformanceMetrics.sortinoRatio(returns, 0.02);
+RiskPerformanceMetrics.calmarRatio(returns, equity);  // needs the equity curve
 
-StressTesting.historicalScenario(portfolio, '2008-crisis');
-StressTesting.monteCarlo(portfolio, { simulations: 10_000, horizon: 252 });
+// Tail risk
+RiskMetrics.var(returns, 0.95, 'historical');         // 95% Value at Risk
+RiskMetrics.cvar(returns, 0.95);                       // Expected Shortfall
+
+// Stress testing on a positions portfolio
+const portfolio = [{ symbol: 'AAPL', qty: 100, avgPrice: 180 }];
+StressTesting.scenario(portfolio, { AAPL: -0.20 });   // apply a -20% shock
+StressTesting.historical(portfolio, {
+  date: new Date('2008-09-15'),
+  returns: { AAPL: -0.30 },
+});
 ```
 
 ### 4. Portfolio Optimization
@@ -458,6 +468,28 @@ npx meridianalgo optimize --strategy momentum --grid config.json
 npx meridianalgo analyze --returns returns.csv
 ```
 
+### 19. Higher-Order Greeks & Tail Risk
+
+```typescript
+import {
+  higherOrderGreeks,
+  modifiedExpectedShortfall, adjustedSharpeRatio, tailRatio,
+} from 'meridianalgo';
+
+// Second- and third-order option sensitivities (verified vs finite differences).
+// Time-decay Greeks (charm/color/veta) share one calendar-time convention.
+const g = higherOrderGreeks({ S: 100, K: 105, T: 0.75, r: 0.03, sigma: 0.25, q: 0.01 }, 'call');
+// { vanna, charm, vomma, veta, speed, zomma, color, ultima, dualDelta, dualGamma }
+
+// Higher-moment-aware risk on a daily return series
+const returns = [0.006, -0.045, 0.004, 0.007, -0.06, 0.003, 0.005, -0.002];
+modifiedExpectedShortfall(returns, 0.95);  // Cornish-Fisher Expected Shortfall (loss)
+adjustedSharpeRatio(returns, 0.02, 252);   // Pézier-White, penalizes skew/kurtosis
+tailRatio(returns, 0.05);                  // right-tail vs left-tail magnitude
+```
+
+See [`docs/OPTIONS.md`](./docs/OPTIONS.md) and [`docs/VOL-RISK.md`](./docs/VOL-RISK.md) for the full reference.
+
 ---
 
 ## API Reference
@@ -482,7 +514,11 @@ import {
   PairsTradingStrategy, StrategyComposer, PositionSizer,
 
   // Risk
-  RiskPerformanceMetrics, StressTesting, PerformanceAttribution,
+  RiskMetrics, RiskPerformanceMetrics, StressTesting, PerformanceAttribution,
+  cornishFisherVaR, modifiedExpectedShortfall, adjustedSharpeRatio, tailRatio,
+
+  // Options
+  blackScholesPrice, blackScholesGreeks, higherOrderGreeks, impliedVolatility,
 
   // Portfolio
   MeanVarianceOptimizer, BlackLittermanModel, RiskParityOptimizer,
@@ -500,15 +536,22 @@ import {
 
 ### Documentation index
 
-- [Getting Started](./docs/GETTING-STARTED.md)
-- [Quick Start](./docs/QUICK-START.md)
-- [API Reference](./docs/API.md)
-- [Indicators Catalog](./docs/INDICATORS.md)
-- [Strategies Guide](./docs/STRATEGIES.md)
-- [Risk Management](./docs/RISK-MANAGEMENT.md)
-- [Setup & Development](./docs/SETUP.md)
-- [Security](./docs/SECURITY.md)
-- [What's Next](./docs/WHATS-NEXT.md)
+Full index at [`docs/INDEX.md`](./docs/INDEX.md).
+
+**Getting started**
+- [Getting Started](./docs/GETTING-STARTED.md) · [Quick Start](./docs/QUICK-START.md) · [Setup & Development](./docs/SETUP.md) · [API Reference](./docs/API.md)
+
+**Analytics & models**
+- [Indicators Catalog](./docs/INDICATORS.md) · [Candlestick Patterns](./docs/INDICATORS-PATTERNS.md)
+- [Streaming Indicators](./docs/STREAMING.md) · [Strategies Guide](./docs/STRATEGIES.md) · [Backtesting](./docs/BACKTEST.md) · [Optimization](./docs/OPTIMIZE.md)
+- [Risk Management](./docs/RISK-MANAGEMENT.md) · [Volatility & Tail Risk](./docs/VOL-RISK.md) · [GARCH](./docs/GARCH.md)
+- [Portfolio Optimization](./docs/PORTFOLIO.md) · [Attribution](./docs/PORTFOLIO-ATTRIBUTION.md)
+- [Options & Greeks](./docs/OPTIONS.md) · [Stochastic Models](./docs/STOCHASTIC.md) · [Credit](./docs/CREDIT.md) · [Yield Curves](./docs/CURVES.md) · [Fixed Income](./docs/FINANCE.md)
+- [Execution Algorithms](./docs/EXECUTION.md) · [Microstructure](./docs/MICROSTRUCTURE.md) · [Machine Learning](./docs/ML.md) · [Time-Series Models](./docs/MODELS.md)
+- [Data Adapters](./docs/DATA.md) · [Core](./docs/CORE.md) · [Utilities](./docs/UTILS.md) · [Types](./docs/TYPES.md) · [CLI](./docs/CLI.md)
+
+**Project**
+- [Security](./docs/SECURITY.md) · [Disclaimer](./docs/DISCLAIMER.md) · [What's Next](./docs/WHATS-NEXT.md)
 
 ---
 
@@ -516,18 +559,26 @@ import {
 
 ```text
 src/
-├── core/         Types, config, logger, plugin registry, errors
-├── indicators/   100+ classic + advanced TA (momentum, volatility, volume, ML, microstructure, regime, seasonality)
-├── data/         Yahoo, Binance, Alpaca, Polygon adapters + DataManager
-├── backtest/     Event-driven TimeBasedEngine + cost models
-├── strategies/   Mean-reversion, momentum, trend, pairs, composer, position sizer
-├── risk/         Metrics, VaR/CVaR, stress testing, performance attribution
-├── portfolio/    Mean-variance, Black-Litterman, risk-parity optimizers
-├── execution/    Paper broker + broker adapter interface
-├── models/       ARIMA, linear regression, state-space models
-├── optimize/     Grid + random parameter search
-├── utils/        Math, stats, time utilities
-└── cli/          Command-line interface
+├── core/           Types, config, logger, plugin registry, errors
+├── indicators/     100+ classic + advanced TA (momentum, volatility, volume, ML, microstructure, regime, seasonality)
+├── data/           Yahoo, Binance, Alpaca, Polygon adapters + DataManager
+├── backtest/       Event-driven TimeBasedEngine + cost models
+├── strategies/     Mean-reversion, momentum, trend, pairs, composer, position sizer
+├── risk/           Metrics, VaR/CVaR, tail-risk, stress testing, attribution, CPPI/TIPP
+├── portfolio/      Mean-variance, Black-Litterman, risk-parity, HRP, Kelly
+├── options/        Black-Scholes, implied vol, higher-order Greeks, option chains
+├── stochastic/     GBM, Heston, CIR, Merton jump-diffusion, Monte Carlo
+├── garch/          GARCH(1,1), EGARCH, GJR-GARCH
+├── finance/        TVM, bond pricing, duration, convexity
+├── curves/         Yield-curve bootstrap, Nelson-Siegel
+├── credit/         Merton structural, CDS, Z-spread, expected loss
+├── microstructure/ Order book, spread estimators, market impact
+├── ml/             LSTM/GRU, walk-forward CV, HMM regimes, feature engineering
+├── execution/      Execution algos (VWAP/TWAP/POV/Almgren-Chriss), paper broker
+├── models/         ARIMA, linear regression, state-space models
+├── optimize/       Grid + random parameter search
+├── utils/          Math, stats, time utilities
+└── cli/            Command-line interface
 ```
 
 ---
@@ -544,7 +595,7 @@ src/
 ## Testing
 
 ```bash
-npm test              # Run all tests (66 passing)
+npm test              # Run all tests (258 passing)
 npm run test:coverage # Coverage report
 npm run test:watch    # TDD mode
 ```

@@ -93,17 +93,19 @@ export function cmo(prices: number[], period: number = 14): number[] {
   const sumGains: number[] = [];
   const sumLosses: number[] = [];
 
-  for (let i = period - 1; i < gains.length; i++) {
-    let gainSum = 0;
-    let lossSum = 0;
-
-    for (let j = i - period + 1; j <= i; j++) {
-      gainSum += gains[j];
-      lossSum += losses[j];
+  let gainSum = 0;
+  let lossSum = 0;
+  for (let i = 0; i < gains.length; i++) {
+    gainSum += gains[i];
+    lossSum += losses[i];
+    if (i >= period) {
+      gainSum -= gains[i - period];
+      lossSum -= losses[i - period];
     }
-
-    sumGains.push(gainSum);
-    sumLosses.push(lossSum);
+    if (i >= period - 1) {
+      sumGains.push(gainSum);
+      sumLosses.push(lossSum);
+    }
   }
 
   const cmoValues: number[] = [];
@@ -450,6 +452,58 @@ export function kst(
 }
 
 /**
+ * True Strength Index (TSI)
+ *
+ * TSI is a momentum oscillator based on double-smoothed price changes.
+ * It ranges from roughly -100 to +100 and identifies trend direction and reversals.
+ *
+ * @param prices - Array of price data
+ * @param longPeriod - Long EMA period (default: 25)
+ * @param shortPeriod - Short EMA period (default: 13)
+ * @param signalPeriod - Signal EMA period (default: 7)
+ * @returns Object containing TSI and signal line (NaN during warmup)
+ *
+ * @example
+ * ```typescript
+ * const { tsi, signal } = MomentumIndicators.tsi(prices);
+ * ```
+ */
+export function tsi(
+  prices: number[],
+  longPeriod: number = 25,
+  shortPeriod: number = 13,
+  signalPeriod: number = 7
+): { tsi: number[]; signal: number[] } {
+  if (prices.length < 2) {
+    const empty = new Array(prices.length).fill(NaN);
+    return { tsi: empty, signal: [...empty] };
+  }
+
+  const mtm: number[] = [];
+  const absMtm: number[] = [];
+  for (let i = 1; i < prices.length; i++) {
+    const d = prices[i] - prices[i - 1];
+    mtm.push(d);
+    absMtm.push(Math.abs(d));
+  }
+
+  // Double-smooth momentum (EMA of EMA)
+  const ds = Indicators.ema(Indicators.ema(mtm, longPeriod), shortPeriod);
+  const dsAbs = Indicators.ema(Indicators.ema(absMtm, longPeriod), shortPeriod);
+
+  const tsiRaw = ds.map((v, i) => (dsAbs[i] !== 0 ? 100 * v / dsAbs[i] : 0));
+  const sigRaw = Indicators.ema(tsiRaw, signalPeriod);
+
+  // Pad to prices.length (TSI starts at index 1)
+  const tsiOut = [NaN, ...tsiRaw];
+  const sigOut: number[] = new Array(prices.length).fill(NaN);
+  const sigStart = 1 + (tsiRaw.length - sigRaw.length);
+  for (let i = 0; i < sigRaw.length; i++) sigOut[sigStart + i] = sigRaw[i];
+
+  return { tsi: tsiOut, signal: sigOut };
+}
+
+/**
  * Collection of momentum-based technical indicators
  */
 export const MomentumIndicators = {
@@ -462,5 +516,6 @@ export const MomentumIndicators = {
   dpo,
   chandeForecastOscillator,
   coppockCurve,
-  kst
+  kst,
+  tsi,
 };

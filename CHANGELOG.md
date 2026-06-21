@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.13.0] - 2026-06-20
+
+### Added
+- **Parabolic SAR** (`Indicators.parabolicSAR`): Stop-and-reverse indicator with configurable
+  acceleration factor. Returns per-bar SAR values and trend direction (`'up'`/`'down'`).
+- **True Strength Index** (`MomentumIndicators.tsi`): Double-smoothed momentum oscillator
+  (long/short/signal EMA periods). Also exported as top-level `tsi` from the indicators module.
+- **Accumulation/Distribution Line** (`VolumeIndicators.adLine`): Cumulative CLV-based
+  volume indicator. Also exported as top-level `adLine`.
+
+### Changed (Performance)
+- `Indicators.sma`: Replaced O(n·period) nested loops with O(n) sliding-window sum.
+- `Indicators.bollingerBands`: Replaced per-bar `slice` + variance loop with O(n)
+  incremental sum-of-squares (no allocations inside the hot path).
+- `Indicators.stochastic`, `donchianChannels`, `williamsR`: Replaced
+  `Math.max/min(...spread)` with inline loops — avoids spread-operator overhead and
+  argument-count limits on large arrays.
+- `MomentumIndicators.cmo`: Rolling sliding-window replaces O(n·period) inner loop.
+- `VolumeIndicators.vwma`, `cmf`: Sliding-window sums replace O(n·period) inner loops.
+
+### Fixed
+- **`Indicators.kama`**: Corrected per-bar Efficiency Ratio (ER) and Smoothing Constant
+  (SC) computation. Previously ER and SC were computed once for the whole series using
+  global min/max rather than the rolling `period`-bar window, producing incorrect values.
+  KAMA now matches the standard Kaufman algorithm.
+
 ## [3.12.0] - 2026-06-04
 
 ### Added

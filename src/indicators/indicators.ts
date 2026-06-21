@@ -124,17 +124,13 @@ export class Indicators {
       this._validateInput(data, period, 1, false);
 
       const result: number[] = new Array(data.length).fill(NaN);
+      if (data.length < period) return result;
 
-      if (data.length < period) {
-        return result;
-      }
-
-      for (let i = period - 1; i < data.length; i++) {
-        let sum = 0;
-        for (let j = i - period + 1; j <= i; j++) {
-          sum += data[j];
-        }
-        result[i] = sum / period;
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) {
+        sum += data[i];
+        if (i >= period) sum -= data[i - period];
+        if (i >= period - 1) result[i] = sum / period;
       }
       return result;
     } catch (error) {
@@ -258,24 +254,26 @@ export class Indicators {
 
       if (data.length < period) return [];
 
-      const kama: number[] = [data[0]]; // Initialize with first price
-
-      // Calculate efficiency ratio (ER)
-      const change = Math.abs(data[data.length - 1] - data[0]);
-      const volatility = data.slice(1).reduce((sum, val, i) => sum + Math.abs(val - data[i]), 0);
-      const er = volatility !== 0 ? change / volatility : 0;
-
-      // Calculate smoothing constant (SC)
       const fastSC = 2 / (fast + 1);
       const slowSC = 2 / (slow + 1);
-      const sc = Math.pow(er * (fastSC - slowSC) + slowSC, 2);
 
-      // Calculate KAMA
-      for (let i = 1; i < data.length; i++) {
-        kama.push(kama[i - 1] + sc * (data[i] - kama[i - 1]));
+      // Initialize with NaN for warmup then first KAMA at index period-1
+      const result: number[] = new Array(period - 1).fill(NaN);
+      result.push(data[period - 1]);
+
+      // Compute KAMA per-bar with rolling ER window
+      for (let i = period; i < data.length; i++) {
+        const change = Math.abs(data[i] - data[i - period]);
+        let volatility = 0;
+        for (let j = i - period + 1; j <= i; j++) {
+          volatility += Math.abs(data[j] - data[j - 1]);
+        }
+        const er = volatility !== 0 ? change / volatility : 0;
+        const sc = Math.pow(er * (fastSC - slowSC) + slowSC, 2);
+        result.push(result[result.length - 1] + sc * (data[i] - result[result.length - 1]));
       }
 
-      return kama;
+      return result;
     } catch (error) {
       if (error instanceof IndicatorError) throw error;
       throw new IndicatorError(`Error in KAMA calculation: ${error instanceof Error ? error.message : String(error)}`);
@@ -490,17 +488,22 @@ export class Indicators {
       const upper: number[] = new Array(data.length).fill(NaN);
       const lower: number[] = new Array(data.length).fill(NaN);
 
-      for (let i = period - 1; i < data.length; i++) {
-        const slice = data.slice(i - period + 1, i + 1);
-        const mean = middle[i];
-
-        if (isNaN(mean)) continue;
-
-        const variance = slice.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / period;
-        const std = Math.sqrt(variance);
-
-        upper[i] = mean + stdDev * std;
-        lower[i] = mean - stdDev * std;
+      // O(n) incremental variance via running sum and sum-of-squares
+      let sum = 0;
+      let sumSq = 0;
+      for (let i = 0; i < data.length; i++) {
+        sum += data[i];
+        sumSq += data[i] * data[i];
+        if (i >= period) {
+          sum -= data[i - period];
+          sumSq -= data[i - period] * data[i - period];
+        }
+        if (i >= period - 1 && !isNaN(middle[i])) {
+          const mean = sum / period;
+          const std = Math.sqrt(Math.max(0, sumSq / period - mean * mean));
+          upper[i] = middle[i] + stdDev * std;
+          lower[i] = middle[i] - stdDev * std;
+        }
       }
 
       return { upper, middle, lower };
@@ -543,16 +546,15 @@ export class Indicators {
       // Calculate %K
       const k: number[] = [];
       for (let i = kPeriod - 1; i < close.length; i++) {
-        const highSlice = high.slice(i - kPeriod + 1, i + 1);
-        const lowSlice = low.slice(i - kPeriod + 1, i + 1);
-
-        const highestHigh = Math.max(...highSlice);
-        const lowestLow = Math.min(...lowSlice);
+        let highestHigh = high[i - kPeriod + 1];
+        let lowestLow = low[i - kPeriod + 1];
+        for (let j = i - kPeriod + 2; j <= i; j++) {
+          if (high[j] > highestHigh) highestHigh = high[j];
+          if (low[j] < lowestLow) lowestLow = low[j];
+        }
         const range = highestHigh - lowestLow;
-
-        const currentClose = close[i];
-        const stochK = range !== 0 ? 100 * ((currentClose - lowestLow) / range) : 0;
-        k.push(Math.min(100, Math.max(0, stochK))); // Clamp between 0 and 100
+        const stochK = range !== 0 ? 100 * ((close[i] - lowestLow) / range) : 0;
+        k.push(Math.min(100, Math.max(0, stochK)));
       }
 
       // Smooth %K if needed
@@ -702,11 +704,14 @@ export class Indicators {
       const lower: number[] = [];
 
       for (let i = period - 1; i < high.length; i++) {
-        const highSlice = high.slice(i - period + 1, i + 1);
-        const lowSlice = low.slice(i - period + 1, i + 1);
-
-        upper.push(Math.max(...highSlice));
-        lower.push(Math.min(...lowSlice));
+        let hi = high[i - period + 1];
+        let lo = low[i - period + 1];
+        for (let j = i - period + 2; j <= i; j++) {
+          if (high[j] > hi) hi = high[j];
+          if (low[j] < lo) lo = low[j];
+        }
+        upper.push(hi);
+        lower.push(lo);
       }
 
       const middle = upper.map((u, i) => (u + lower[i]) / 2);
@@ -730,6 +735,79 @@ export class Indicators {
   static priceChannels = this.donchianChannels;
 
   /**
+   * Calculate Parabolic SAR (Stop and Reverse)
+   * @param high - Array of high prices
+   * @param low - Array of low prices
+   * @param step - Acceleration factor step (default: 0.02)
+   * @param max - Maximum acceleration factor (default: 0.2)
+   * @returns Object containing SAR values and trend direction ('up' | 'down')
+   */
+  static parabolicSAR(
+    high: number[],
+    low: number[],
+    step: number = 0.02,
+    max: number = 0.2
+  ): { sar: number[]; trend: ('up' | 'down')[] } {
+    try {
+      if (high.length !== low.length) {
+        throw new IndicatorError('High and low arrays must have the same length');
+      }
+      if (high.length < 2) return { sar: new Array(high.length).fill(NaN), trend: new Array(high.length).fill('up') as ('up' | 'down')[] };
+
+      const sar: number[] = new Array(high.length).fill(NaN);
+      const trend: ('up' | 'down')[] = new Array(high.length).fill('up') as ('up' | 'down')[];
+
+      let isUp = true;
+      let af = step;
+      let ep = high[0];
+      sar[0] = low[0];
+
+      for (let i = 1; i < high.length; i++) {
+        const prevSar = sar[i - 1];
+        let newSar: number;
+
+        if (isUp) {
+          newSar = prevSar + af * (ep - prevSar);
+          newSar = Math.min(newSar, low[i - 1]);
+          if (i >= 2) newSar = Math.min(newSar, low[i - 2]);
+
+          if (low[i] < newSar) {
+            isUp = false;
+            newSar = ep;
+            ep = low[i];
+            af = step;
+          } else if (high[i] > ep) {
+            ep = high[i];
+            af = Math.min(af + step, max);
+          }
+        } else {
+          newSar = prevSar + af * (ep - prevSar);
+          newSar = Math.max(newSar, high[i - 1]);
+          if (i >= 2) newSar = Math.max(newSar, high[i - 2]);
+
+          if (high[i] > newSar) {
+            isUp = true;
+            newSar = ep;
+            ep = high[i];
+            af = step;
+          } else if (low[i] < ep) {
+            ep = low[i];
+            af = Math.min(af + step, max);
+          }
+        }
+
+        sar[i] = newSar;
+        trend[i] = isUp ? 'up' : 'down';
+      }
+
+      return { sar, trend };
+    } catch (error) {
+      if (error instanceof IndicatorError) throw error;
+      throw new IndicatorError(`Error in Parabolic SAR calculation: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  /**
    * Calculate Williams %R
    * @param high - Array of high prices
    * @param low - Array of low prices
@@ -750,18 +828,14 @@ export class Indicators {
       const result: number[] = [];
 
       for (let i = period - 1; i < close.length; i++) {
-        const highSlice = high.slice(i - period + 1, i + 1);
-        const lowSlice = low.slice(i - period + 1, i + 1);
-
-        const highestHigh = Math.max(...highSlice);
-        const lowestLow = Math.min(...lowSlice);
-        const range = highestHigh - lowestLow;
-
-        if (range === 0) {
-          result.push(0); // Avoid division by zero
-        } else {
-          result.push((-100 * (highestHigh - close[i])) / range);
+        let highestHigh = high[i - period + 1];
+        let lowestLow = low[i - period + 1];
+        for (let j = i - period + 2; j <= i; j++) {
+          if (high[j] > highestHigh) highestHigh = high[j];
+          if (low[j] < lowestLow) lowestLow = low[j];
         }
+        const range = highestHigh - lowestLow;
+        result.push(range === 0 ? 0 : (-100 * (highestHigh - close[i])) / range);
       }
 
       // Pad the beginning with NaN to match input length

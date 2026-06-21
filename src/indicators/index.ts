@@ -3,8 +3,8 @@
  */
 
 export { Indicators, IndicatorError } from './indicators';
-export { VolumeIndicators } from './volume';
-export { MomentumIndicators } from './momentum';
+export { VolumeIndicators, adLine } from './volume';
+export { MomentumIndicators, tsi } from './momentum';
 export { VolatilityIndicators } from './volatility';
 export { PerformanceCalculators } from './performance';
 export { PatternRecognition } from './patterns';

@@ -354,6 +354,104 @@ Indicators.donchianChannels(
 - Trend identification
 - Support/resistance levels
 
+### Parabolic SAR
+
+Stop-and-reverse indicator that follows price trends and provides dynamic stop levels.
+
+```typescript
+Indicators.parabolicSAR(
+  high: number[],
+  low: number[],
+  step?: number,  // acceleration factor step, default: 0.02
+  max?: number    // maximum acceleration factor, default: 0.2
+): {
+  sar: number[];           // SAR values
+  trend: ('up'|'down')[];  // trend direction per bar
+}
+```
+
+**Interpretation:**
+- When `trend === 'up'`: SAR is below price (bullish)
+- When `trend === 'down'`: SAR is above price (bearish)
+- A trend flip signals a potential reversal
+
+**Example:**
+```typescript
+const { sar, trend } = Indicators.parabolicSAR(high, low);
+const last = trend[trend.length - 1];
+console.log(last === 'up' ? 'Bullish — stop at ' + sar[sar.length - 1] : 'Bearish');
+```
+
+---
+
+### TSI - True Strength Index
+
+Double-smoothed momentum oscillator that identifies trend direction and reversals.
+Available via `MomentumIndicators.tsi()`.
+
+```typescript
+import { MomentumIndicators } from 'meridianalgo';
+
+MomentumIndicators.tsi(
+  prices: number[],
+  longPeriod?: number,    // default: 25
+  shortPeriod?: number,   // default: 13
+  signalPeriod?: number   // default: 7
+): {
+  tsi: number[];     // TSI line (range approx -100 to +100)
+  signal: number[];  // Signal line (EMA of TSI)
+}
+```
+
+**Interpretation:**
+- TSI above 0: Bullish momentum
+- TSI below 0: Bearish momentum
+- TSI crossing signal line: Entry/exit signal
+
+**Example:**
+```typescript
+const { tsi, signal } = MomentumIndicators.tsi(prices);
+const i = tsi.length - 1;
+if (tsi[i] > signal[i] && tsi[i - 1] <= signal[i - 1]) {
+  console.log('Bullish TSI crossover');
+}
+```
+
+---
+
+### A/D Line - Accumulation/Distribution Line
+
+Cumulative volume indicator using the Close Location Value (CLV) to gauge buying vs selling pressure. Unlike OBV, it factors in where the close falls within the bar's range.
+Available via `VolumeIndicators.adLine()`.
+
+```typescript
+import { VolumeIndicators } from 'meridianalgo';
+
+VolumeIndicators.adLine(
+  high: number[],
+  low: number[],
+  close: number[],
+  volume: number[]
+): number[]
+```
+
+**Returns:** Cumulative A/D Line values (no warmup, starts at bar 0)
+
+**Interpretation:**
+- Rising A/D: Buying pressure (accumulation)
+- Falling A/D: Selling pressure (distribution)
+- Divergence with price: Potential trend reversal
+
+**Example:**
+```typescript
+const ad = VolumeIndicators.adLine(high, low, close, volume);
+const last = ad[ad.length - 1];
+const prev = ad[ad.length - 2];
+console.log(last > prev ? 'Accumulation' : 'Distribution');
+```
+
+---
+
 ## Error Handling
 
 All indicators throw `IndicatorError` for invalid inputs:

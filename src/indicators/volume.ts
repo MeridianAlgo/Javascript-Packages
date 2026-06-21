@@ -100,16 +100,16 @@ export function vwma(prices: number[], volume: number[], period: number): number
 
   const vwmaValues: number[] = [];
 
-  for (let i = period - 1; i < prices.length; i++) {
-    let volumeSum = 0;
-    let volumePriceSum = 0;
-
-    for (let j = i - period + 1; j <= i; j++) {
-      volumeSum += volume[j];
-      volumePriceSum += prices[j] * volume[j];
+  let volSum = 0;
+  let volPriceSum = 0;
+  for (let i = 0; i < prices.length; i++) {
+    volSum += volume[i];
+    volPriceSum += prices[i] * volume[i];
+    if (i >= period) {
+      volSum -= volume[i - period];
+      volPriceSum -= prices[i - period] * volume[i - period];
     }
-
-    vwmaValues.push(volumeSum > 0 ? volumePriceSum / volumeSum : 0);
+    if (i >= period - 1) vwmaValues.push(volSum > 0 ? volPriceSum / volSum : 0);
   }
 
   return vwmaValues;
@@ -221,16 +221,16 @@ export function cmf(
   }
 
   const cmfValues: number[] = [];
-  for (let i = period - 1; i < high.length; i++) {
-    let sumMoneyFlowVolume = 0;
-    let sumVolume = 0;
-
-    for (let j = i - period + 1; j <= i; j++) {
-      sumMoneyFlowVolume += moneyFlowVolume[j];
-      sumVolume += volume[j];
+  let mfvSum = 0;
+  let volSum = 0;
+  for (let i = 0; i < high.length; i++) {
+    mfvSum += moneyFlowVolume[i];
+    volSum += volume[i];
+    if (i >= period) {
+      mfvSum -= moneyFlowVolume[i - period];
+      volSum -= volume[i - period];
     }
-
-    cmfValues.push(sumVolume > 0 ? sumMoneyFlowVolume / sumVolume : 0);
+    if (i >= period - 1) cmfValues.push(volSum > 0 ? mfvSum / volSum : 0);
   }
 
   // Pad the beginning with NaN to match input length
@@ -408,6 +408,49 @@ export function volumeOscillator(
 }
 
 /**
+ * Accumulation/Distribution Line (A/D Line)
+ *
+ * The A/D Line is a cumulative volume indicator that uses the Close Location Value
+ * (CLV) to determine whether buyers or sellers are in control. Unlike OBV, it
+ * factors in where the close falls within the high-low range.
+ *
+ * @param high - Array of high prices
+ * @param low - Array of low prices
+ * @param close - Array of closing prices
+ * @param volume - Array of volume values
+ * @returns Cumulative A/D Line values
+ *
+ * @example
+ * ```typescript
+ * const ad = VolumeIndicators.adLine(high, low, close, volume);
+ * ```
+ */
+export function adLine(
+  high: number[],
+  low: number[],
+  close: number[],
+  volume: number[]
+): number[] {
+  if (high.length !== low.length || high.length !== close.length || high.length !== volume.length) {
+    throw new Error('High, low, close, and volume arrays must have the same length');
+  }
+
+  if (high.length === 0) return [];
+
+  const ad: number[] = [];
+  let cumulative = 0;
+
+  for (let i = 0; i < high.length; i++) {
+    const range = high[i] - low[i];
+    const clv = range !== 0 ? (2 * close[i] - high[i] - low[i]) / range : 0;
+    cumulative += clv * volume[i];
+    ad.push(cumulative);
+  }
+
+  return ad;
+}
+
+/**
  * Collection of volume-based technical indicators
  */
 export const VolumeIndicators = {
@@ -419,5 +462,6 @@ export const VolumeIndicators = {
   nvi,
   pvi,
   emv,
-  volumeOscillator
+  volumeOscillator,
+  adLine,
 };

@@ -417,3 +417,138 @@ export function pivotPoints(prevHigh: number, prevLow: number, prevClose: number
   const s3 = prevLow - 2 * (prevHigh - p);
   return { pivot: p, r1, r2, r3, s1, s2, s3 };
 }
+
+// ─── Vortex Indicator (VI+ / VI-) ────────────────────────────────────────────
+
+export interface VortexResult {
+  viPlus: number[];
+  viMinus: number[];
+}
+
+/** Vortex Indicator: trend direction/strength from up/down vortex movement. */
+export function vortex(candles: readonly OHLC[], period = 14): VortexResult {
+  const n = candles.length;
+  const viPlus: number[] = new Array(n).fill(NaN);
+  const viMinus: number[] = new Array(n).fill(NaN);
+  const tr = trueRange(candles);
+  const vmPlus: number[] = new Array(n).fill(NaN);
+  const vmMinus: number[] = new Array(n).fill(NaN);
+  for (let i = 1; i < n; i++) {
+    vmPlus[i] = Math.abs(candles[i].high - candles[i - 1].low);
+    vmMinus[i] = Math.abs(candles[i].low - candles[i - 1].high);
+  }
+  for (let i = period; i < n; i++) {
+    let sTR = 0, sP = 0, sM = 0;
+    for (let j = i - period + 1; j <= i; j++) {
+      sTR += tr[j]; sP += vmPlus[j]; sM += vmMinus[j];
+    }
+    if (sTR !== 0) {
+      viPlus[i] = sP / sTR;
+      viMinus[i] = sM / sTR;
+    }
+  }
+  return { viPlus, viMinus };
+}
+
+// ─── Awesome Oscillator ──────────────────────────────────────────────────────
+
+/** Awesome Oscillator: SMA(median,5) - SMA(median,34) of (high+low)/2. */
+export function awesomeOscillator(candles: readonly OHLC[], fast = 5, slow = 34): number[] {
+  const median = candles.map((c) => (c.high + c.low) / 2);
+  const f = sma(median, fast);
+  const s = sma(median, slow);
+  return median.map((_, i) => (Number.isNaN(f[i]) || Number.isNaN(s[i]) ? NaN : f[i] - s[i]));
+}
+
+// ─── Ultimate Oscillator ─────────────────────────────────────────────────────
+
+/** Larry Williams' Ultimate Oscillator over three timeframes. */
+export function ultimateOscillator(
+  candles: readonly OHLC[],
+  short = 7,
+  medium = 14,
+  long = 28,
+): number[] {
+  const n = candles.length;
+  const out: number[] = new Array(n).fill(NaN);
+  const bp: number[] = new Array(n).fill(NaN);
+  const tr: number[] = new Array(n).fill(NaN);
+  for (let i = 1; i < n; i++) {
+    const prevClose = candles[i - 1].close;
+    const low = Math.min(candles[i].low, prevClose);
+    const high = Math.max(candles[i].high, prevClose);
+    bp[i] = candles[i].close - low;
+    tr[i] = high - low;
+  }
+  const avg = (i: number, period: number): number => {
+    let sBP = 0, sTR = 0;
+    for (let j = i - period + 1; j <= i; j++) { sBP += bp[j]; sTR += tr[j]; }
+    return sTR === 0 ? 0 : sBP / sTR;
+  };
+  for (let i = long; i < n; i++) {
+    const a = avg(i, short), b = avg(i, medium), c = avg(i, long);
+    out[i] = (100 * (4 * a + 2 * b + c)) / 7;
+  }
+  return out;
+}
+
+// ─── TRIX ────────────────────────────────────────────────────────────────────
+
+/** TRIX: 1-period rate of change of a triple-smoothed EMA, in percent. */
+export function trix(closes: readonly number[], period = 15): number[] {
+  const e1 = ema(closes, period);
+  const e2 = ema(e1, period);
+  const e3 = ema(e2, period);
+  const out: number[] = new Array(closes.length).fill(NaN);
+  for (let i = 1; i < e3.length; i++) {
+    if (e3[i - 1] !== 0 && Number.isFinite(e3[i]) && Number.isFinite(e3[i - 1])) {
+      out[i] = (100 * (e3[i] - e3[i - 1])) / e3[i - 1];
+    }
+  }
+  return out;
+}
+
+// ─── Hull Moving Average ─────────────────────────────────────────────────────
+
+const wma = (xs: readonly number[], n: number): number[] => {
+  const out: number[] = new Array(xs.length).fill(NaN);
+  const denom = (n * (n + 1)) / 2;
+  for (let i = n - 1; i < xs.length; i++) {
+    let acc = 0;
+    for (let j = 0; j < n; j++) acc += xs[i - j] * (n - j);
+    out[i] = acc / denom;
+  }
+  return out;
+};
+
+/** Hull Moving Average: low-lag, smooth trend follower. */
+export function hullMovingAverage(closes: readonly number[], period = 16): number[] {
+  const half = Math.max(1, Math.floor(period / 2));
+  const sqrtN = Math.max(1, Math.round(Math.sqrt(period)));
+  const wmaHalf = wma(closes, half);
+  const wmaFull = wma(closes, period);
+  const raw = closes.map((_, i) =>
+    Number.isNaN(wmaHalf[i]) || Number.isNaN(wmaFull[i]) ? NaN : 2 * wmaHalf[i] - wmaFull[i],
+  );
+  // Final WMA only over windows fully clear of the raw NaN warmup region.
+  const out: number[] = new Array(closes.length).fill(NaN);
+  const denom = (sqrtN * (sqrtN + 1)) / 2;
+  for (let i = sqrtN - 1; i < raw.length; i++) {
+    if (Number.isNaN(raw[i - sqrtN + 1])) continue;
+    let acc = 0;
+    for (let j = 0; j < sqrtN; j++) acc += raw[i - j] * (sqrtN - j);
+    out[i] = acc / denom;
+  }
+  return out;
+}
+
+// ─── Balance of Power ────────────────────────────────────────────────────────
+
+/** Balance of Power: (close-open)/(high-low), optionally SMA-smoothed. */
+export function balanceOfPower(candles: readonly OHLC[], smoothing = 1): number[] {
+  const bop = candles.map((c) => {
+    const range = c.high - c.low;
+    return range === 0 ? 0 : (c.close - c.open) / range;
+  });
+  return smoothing > 1 ? sma(bop, smoothing) : bop;
+}

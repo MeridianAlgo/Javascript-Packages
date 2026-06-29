@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.14.0] - 2026-06-29
+
+### Added
+- **Vortex Indicator** (`vortex`): VI+/VI- trend direction and strength from up/down
+  vortex movement normalized by true range. Returns `{ viPlus, viMinus }`.
+- **Awesome Oscillator** (`awesomeOscillator`): SMA(5) − SMA(34) of the median price.
+- **Ultimate Oscillator** (`ultimateOscillator`): Larry Williams' three-timeframe
+  buying-pressure oscillator, bounded 0–100.
+- **TRIX** (`trix`): 1-period rate of change of a triple-smoothed EMA, in percent.
+- **Hull Moving Average** (`hullMovingAverage`): low-lag WMA-composed trend follower,
+  with clean NaN warmup (no window bleeds the smoothing region).
+- **Balance of Power** (`balanceOfPower`): (close−open)/(high−low), optional SMA smoothing.
+
+All six are exported from the indicators module and pick up no new dependencies.
+
 ## [3.13.0] - 2026-06-20
 
 ### Added

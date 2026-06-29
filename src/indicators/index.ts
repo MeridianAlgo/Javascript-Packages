@@ -66,11 +66,18 @@ export {
   dpo,
   elderRay,
   pivotPoints,
+  vortex,
+  awesomeOscillator,
+  ultimateOscillator,
+  trix,
+  hullMovingAverage,
+  balanceOfPower,
 } from './advanced';
 export type {
   IchimokuResult,
   SupertrendResult,
   DonchianResult,
   PivotLevels,
+  VortexResult,
 } from './advanced';
 
